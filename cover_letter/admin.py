@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import CoverLetter
+from .models import CoverLetterSubscriber
 
-admin.site.register(CoverLetter)
+admin.site.register(CoverLetterSubscriber)

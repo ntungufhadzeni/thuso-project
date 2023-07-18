@@ -1,7 +1,8 @@
-from .chat_gpt import JobSeekerAssistant
+from .chat import CoverLetterAssistant
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.conf import settings
 
 
 def index(request):
@@ -11,7 +12,7 @@ def index(request):
 @csrf_exempt
 def whatsapp_webhook(request):
     if request.method == 'GET':
-        verify_token = 'b6046276-0ab2-4c8a-98cf-94c62be80ed8'
+        verify_token = settings.VERIFY_TOKEN
         mode = request.GET['hub.mode']
         token = request.GET['hub.verify_token']
         challenge = request.GET['hub.challenge']
@@ -27,14 +28,11 @@ def whatsapp_webhook(request):
         if 'contacts' in data['entry'][0]['changes'][0]['value']:
             if data['object'] == 'whatsapp_business_account':
                 profile_name = data['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']
-                phone_number_id = data['entry'][0]['changes'][0]['value']['metadata']['phone_number_id']
-                whatsapp_id = data['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
                 from_id = data['entry'][0]['changes'][0]['value']['messages'][0]['from']
                 text = data['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
 
-                chat = JobSeekerAssistant(profile_name, phone_number_id, whatsapp_id, from_id, text)
-                chat.ask_agent()
-                chat.send_whatsapp_message()
+                cover_letter_assistant = CoverLetterAssistant(profile_name, from_id, text)
+                cover_letter_assistant.send_response()
             else:
                 pass
         else:
