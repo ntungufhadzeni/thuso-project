@@ -1,4 +1,3 @@
-
 from pathlib import Path
 from environs import Env
 import os
@@ -16,8 +15,14 @@ SECRET_KEY = env.str('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0470-197-185-99-33.ngrok-free.app', 'localhost']
+HOST = env.str('HOST')
 
+ALLOWED_HOSTS = [HOST, 'localhost']
+
+# Base url to serve media files
+MEDIA_URL = '/uploads/'
+# Path where media is stored
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads/')
 
 # Application definition
 
@@ -61,7 +66,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'thuso.wsgi.application'
 
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -72,8 +76,6 @@ DATABASES = {
         "PORT": 5432,  # default PostgreSQL port
     }
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -93,7 +95,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -104,7 +105,6 @@ TIME_ZONE = 'Africa/Johannesburg'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -121,3 +121,5 @@ GRAPHLY_URL = env.str('URL')
 
 OPENAI_API_KEY = env.str("OPENAI_API_KEY")
 VERIFY_TOKEN = env.str('VERIFY_TOKEN')
+CELERY_BROKER_URL = env.str('CELERY_BROKER_URL')
+

@@ -27,11 +27,13 @@ def whatsapp_webhook(request):
 
         if 'contacts' in data['entry'][0]['changes'][0]['value']:
             if data['object'] == 'whatsapp_business_account':
+                phone_id = data['entry'][0]['changes'][0]['value']['metadata']['phone_number_id']
                 profile_name = data['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']
+                whatsapp_id = data['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
                 from_id = data['entry'][0]['changes'][0]['value']['messages'][0]['from']
                 text = data['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
 
-                cover_letter_assistant = CoverLetterAssistant(profile_name, from_id, text)
+                cover_letter_assistant = CoverLetterAssistant(phone_id, profile_name, whatsapp_id, from_id, text)
                 cover_letter_assistant.send_response()
             else:
                 pass

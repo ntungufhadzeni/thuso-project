@@ -26,7 +26,7 @@ class IRepository(ABC):
 
 
 class AnswerRepository(IRepository):
-    store = Store(name='some_name', redis_config=RedisConfig(db=5, host='cache', port=6379),
+    store = Store(name='some_name', redis_config=RedisConfig(db=5, host='redis', port=6379),
                   life_span_in_seconds=3600)
     store.register_model(CoverLetter)
 

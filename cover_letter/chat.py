@@ -1,7 +1,9 @@
 import openai
 import requests
 from django.conf import settings
+
 from .crud import AnswerRepository
+from .tasks import generate_cover_letter
 
 openai.api_key = settings.OPENAI_API_KEY
 
@@ -23,8 +25,10 @@ class CoverLetterAssistant:
         'Do you have any specific closing statements or information you would like to include in the letter? For example, your availability for an interview or references.'
     ]
 
-    def __init__(self, profile_name: str, from_id: str, text: str):
+    def __init__(self, phone_id: str, profile_name: str, whatsapp_id: str, from_id: str, text: str):
+        self.phone_id = phone_id
         self.profile_name = profile_name
+        self.whatsapp_id = whatsapp_id
         self.from_id = from_id
         self.text = text
         self.__answers = None
@@ -39,7 +43,8 @@ class CoverLetterAssistant:
             "type": "text",
             "text": {"body": response}
         }
-        requests.post(settings.GRAPHLY_URL, headers=headers, json=payload)
+        res = requests.post(settings.GRAPHLY_URL, headers=headers, json=payload)
+        return res.json()
 
     def __handle_chat(self):
         if self.__answers.full_name:
@@ -55,11 +60,23 @@ class CoverLetterAssistant:
                                                 if self.__answers.achievements:
                                                     if self.__answers.motivation:
                                                         if self.__answers.closing:
-                                                            self.__generate_cover_letter()
+                                                            self.__send_whatsapp_message(
+                                                                "😀 Great we have everything we need to create your "
+                                                                "Cover Letter. We will send it to you when we are "
+                                                                "done . . . . ")
+                                                            self.__answers = \
+                                                                self.__answers_repo.get_by_id(self.from_id)[0]
+                                                            generate_cover_letter(self.__answers, self.from_id)
                                                         else:
                                                             data = {'closing': self.text}
                                                             self.__answers_repo.update(self.from_id, data)
-                                                            self.__generate_cover_letter()
+                                                            self.__send_whatsapp_message(
+                                                                "😀 Great we have everything we need to create your "
+                                                                "Cover Letter. We will send it to you when we are "
+                                                                "done . . . . ")
+                                                            self.__answers = \
+                                                                self.__answers_repo.get_by_id(self.from_id)[0]
+                                                            generate_cover_letter(self.__answers, self.from_id)
                                                     else:
                                                         data = {'motivation': self.text}
                                                         self.__answers_repo.update(self.from_id, data)
@@ -112,7 +129,7 @@ class CoverLetterAssistant:
     def send_response(self):
         answers = self.__answers_repo.get_by_id(self.from_id)
         if len(answers) == 0:
-            message = 'Welcome to the AI Cover Letter creator. I am going to help you write a cover letter that ' \
+            message = 'Welcome to the AI Cover Letter creator 😀. I am going to help you write a cover letter that ' \
                       'will help you land your dream job. To get started, answer this question: \n'
             self.__send_whatsapp_message(message)
             self.__send_whatsapp_message(CoverLetterAssistant.questions[0])
@@ -121,29 +138,5 @@ class CoverLetterAssistant:
             self.__answers = answers[0]
             self.__handle_chat()
 
-    def __generate_cover_letter(self):
-        self.__answers = self.__answers_repo.get_by_id(self.from_id)[0]
 
-        prompt = f"""Write a cover letter for me. Here is my details:
-        Full Name: {self.__answers.full_name}, Address: {self.__answers.address}, Phone: {self.__answers.phone_number},
-        Email address: {self.__answers.email}, Job Details: {self.__answers.job_title}, Company Name:{self.__answers.company_name},
-        Company Address: {self.__answers.company_address}, Salutation: {self.__answers.hiring_manager}, Introduction: {self.__answers.introduction},
-        Skills and Qualifications: {self.__answers.skills_and_qualifications}, Achievements and Accomplishments: {self.__answers.achievements},
-        Motivation: {self.__answers.motivation}, Closing: {self.__answers.closing}. Return cover letter body only."""
 
-        response = openai.Completion.create(
-            engine='text-davinci-003',
-            prompt=prompt,
-            max_tokens=500,
-            n=1,
-            stop=None,
-            temperature=0.7,
-            top_p=1.0,
-            frequency_penalty=0.0,
-            presence_penalty=0.0
-        )
-
-        cover_letter = response.choices[0].text.strip()
-        self.__send_whatsapp_message("Here's your cover letter. Good luck!")
-        self.__send_whatsapp_message(cover_letter)  # send cover letter via whatsapp
-        self.__answers_repo.delete(self.from_id)  # delete all the answers
