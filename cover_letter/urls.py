@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('get-cover-letter/', views.whatsapp_webhook, name='whatsapp-webhook')
+    path('cover-letter/', views.whatsapp_webhook, name='whatsapp-webhook')
 ]
 
 if settings.DEBUG:

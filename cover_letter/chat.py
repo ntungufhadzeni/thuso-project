@@ -43,8 +43,7 @@ class CoverLetterAssistant:
             "type": "text",
             "text": {"body": response}
         }
-        res = requests.post(settings.GRAPHLY_URL, headers=headers, json=payload)
-        return res.json()
+        requests.post(settings.GRAPHLY_URL, headers=headers, json=payload)
 
     def __handle_chat(self):
         if self.__answers.full_name:
@@ -76,7 +75,7 @@ class CoverLetterAssistant:
                                                                 "done . . . . ")
                                                             self.__answers = \
                                                                 self.__answers_repo.get_by_id(self.from_id)[0]
-                                                            generate_cover_letter(self.__answers, self.from_id)
+                                                            generate_cover_letter.delay(self.__answers, self.from_id)
                                                     else:
                                                         data = {'motivation': self.text}
                                                         self.__answers_repo.update(self.from_id, data)
@@ -128,10 +127,12 @@ class CoverLetterAssistant:
 
     def send_response(self):
         answers = self.__answers_repo.get_by_id(self.from_id)
-        if len(answers) == 0:
+        if len(answers) == 0 or self.text.lower() == 'reset':
             message = 'Welcome to the AI Cover Letter creator 😀. I am going to help you write a cover letter that ' \
-                      'will help you land your dream job. To get started, answer this question: \n'
+                      'will help you land your dream job. If you make a mistake during the process, reply with ' \
+                      '"reset" to start over.'
             self.__send_whatsapp_message(message)
+            self.__send_whatsapp_message('To get started, answer this question: \n')
             self.__send_whatsapp_message(CoverLetterAssistant.questions[0])
             self.__answers = self.__answers_repo.create(self.from_id)[0]
         else:

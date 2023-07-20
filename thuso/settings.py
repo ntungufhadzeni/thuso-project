@@ -111,15 +111,17 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# facebook credentials
 TOKEN = 'Bearer ' + env.str('TOKEN')
 GRAPHLY_URL = env.str('URL')
-
-OPENAI_API_KEY = env.str("OPENAI_API_KEY")
 VERIFY_TOKEN = env.str('VERIFY_TOKEN')
-CELERY_BROKER_URL = env.str('CELERY_BROKER_URL')
 
+# openai
+OPENAI_API_KEY = env.str("OPENAI_API_KEY")
+
+
+# celery settings
+CELERY_BROKER_URL = env.str('REDIS_URL')
+CELERY_RESULT_BACKEND = env.str('REDIS_URL')

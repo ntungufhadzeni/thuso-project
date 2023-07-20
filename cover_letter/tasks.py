@@ -11,7 +11,7 @@ from cover_letter.crud import AnswerRepository
 openai.api_key = settings.OPENAI_API_KEY
 
 
-@shared_task
+@shared_task()
 def generate_cover_letter(answers, from_id):
     prompt = f"""Write a cover letter for me. Here is my details:
         Full Name: {answers.full_name}, Address: {answers.address}, Phone: {answers.phone_number},
@@ -33,12 +33,12 @@ def generate_cover_letter(answers, from_id):
     )
 
     cover_letter = response.choices[0].text.strip()
-    generate_pdf(cover_letter, from_id)  # send cover letter via whatsapp
+    generate_pdf.delay(cover_letter, from_id)  # send cover letter via whatsapp
     answers_repo = AnswerRepository()
     answers_repo.delete(from_id)
 
 
-@shared_task
+@shared_task()
 def generate_pdf(cover_letter, from_id):
     filename = 'cover_letter.pdf'
 
@@ -61,10 +61,10 @@ def generate_pdf(cover_letter, from_id):
     pdfkit.from_string(cover_letter, pdf_save_path, configuration=config, options=options)
 
     link = 'https://' + settings.HOST + '/uploads' + '/cover_letters/{}/{}'.format(from_id, filename)
-    send_whatsapp_doc(from_id, link)
+    send_whatsapp_doc.delay(from_id, link)
 
 
-@shared_task
+@shared_task()
 def send_whatsapp_doc(from_id, link):
     headers = {"Authorization": settings.TOKEN}
     payload = {

@@ -24,6 +24,7 @@ def whatsapp_webhook(request):
 
     if request.method == 'POST':
         data = json.loads(request.body)
+        print(data)
 
         if 'contacts' in data['entry'][0]['changes'][0]['value']:
             if data['object'] == 'whatsapp_business_account':
