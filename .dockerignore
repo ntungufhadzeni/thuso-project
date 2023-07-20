@@ -1,8 +1,10 @@
-.venv/
-.git/
-.gitignore
-.dockerignore
-.idea/
+**/.venv
+**/.git
+**/.gitignore
+**/.dockerignore
+**/.idea
 docker-compose.yml
+docker-compose.prod.yml
+Dockerfile.certbot
 Dockerfile
-__pycache__/
+**/__pycache__
