@@ -6,7 +6,7 @@ from django.conf import settings
 
 
 def index(request):
-    return HttpResponse("Home")
+    return HttpResponse("WhatsApp this number +1 555 067 7930 to generate a cover letter for free.")
 
 
 @csrf_exempt
