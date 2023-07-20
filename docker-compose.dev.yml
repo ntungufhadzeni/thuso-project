@@ -3,25 +3,14 @@ version: "3.9"
 services:
   web:
     build: .
-    command: gunicorn thuso.wsgi:application --bind 0.0.0.0:8000
+    command: python /code/manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
-    expose:
-      - 8000
+    ports:
+      - "8000:8000"
     depends_on:
       - db
       - redis
-  nginx:
-    image: nginx:latest
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/lib/letsencrypt
-    ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - web
   db:
     image: postgres:13
     volumes:
@@ -39,8 +28,7 @@ services:
       - .:/code
     depends_on:
       - web
+      - redis
 
 volumes:
   postgres_data:
-  certbot-etc:
-  certbot-var:
