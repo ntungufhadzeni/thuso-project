@@ -3,7 +3,8 @@ version: "3.9"
 services:
   web:
     build: .
-    command: gunicorn thuso.wsgi:application --bind 0.0.0.0:8000
+    command: >
+      sh -c "python manage.py collectstatic --noinput && gunicorn thuso.wsgi:application --bind unix:/code/gunicorn.sock"
     volumes:
       - media_volume:/code/uploads
     expose:
