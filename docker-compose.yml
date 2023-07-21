@@ -3,8 +3,7 @@ version: "3.9"
 services:
   web:
     build: .
-    command: >
-      sh -c "gunicorn thuso.wsgi:application --bind unix:/code/gunicorn.sock"
+    command: gunicorn thuso.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - media_volume:/code/uploads
     expose:

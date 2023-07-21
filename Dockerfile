@@ -9,14 +9,6 @@ ENV PYTHONUNBUFFERED 1
 # Set work directory
 WORKDIR /code
 
-RUN mkdir -p /code/gunicorn
-
-# Set appropriate permissions on the directory and files
-RUN chown -R 1000:1000 /code
-
-# Expose the socket directory to the host
-VOLUME /code/gunicorn
-
 # Install dependencies
 COPY ./requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
