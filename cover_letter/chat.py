@@ -59,23 +59,23 @@ class CoverLetterAssistant:
                                                 if self.__answers.achievements:
                                                     if self.__answers.motivation:
                                                         if self.__answers.closing:
-                                                            self.__send_whatsapp_message(
-                                                                "😀 Great we have everything we need to create your "
-                                                                "Cover Letter. We will send it to you when we are "
-                                                                "done . . . . ")
                                                             self.__answers = \
                                                                 self.__answers_repo.get_by_id(self.from_id)[0]
                                                             generate_cover_letter(self.__answers, self.from_id)
-                                                        else:
-                                                            data = {'closing': self.text}
-                                                            self.__answers_repo.update(self.from_id, data)
                                                             self.__send_whatsapp_message(
                                                                 "😀 Great we have everything we need to create your "
                                                                 "Cover Letter. We will send it to you when we are "
                                                                 "done . . . . ")
+                                                        else:
+                                                            data = {'closing': self.text}
+                                                            self.__answers_repo.update(self.from_id, data)
                                                             self.__answers = \
                                                                 self.__answers_repo.get_by_id(self.from_id)[0]
                                                             generate_cover_letter.delay(self.__answers, self.from_id)
+                                                            self.__send_whatsapp_message(
+                                                                "😀 Great we have everything we need to create your "
+                                                                "Cover Letter. We will send it to you when we are "
+                                                                "done . . . . ")
                                                     else:
                                                         data = {'motivation': self.text}
                                                         self.__answers_repo.update(self.from_id, data)

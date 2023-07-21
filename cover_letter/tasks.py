@@ -60,7 +60,7 @@ def generate_pdf(cover_letter, from_id):
     # Save the PDF
     pdfkit.from_string(cover_letter, pdf_save_path, configuration=config, options=options)
 
-    link = 'https://' + settings.HOST + '/uploads' + '/cover_letters/{}/{}'.format(from_id, filename)
+    link = 'https://www.' + settings.HOST + '/uploads' + '/cover_letters/{}/{}'.format(from_id, filename)
     send_whatsapp_doc.delay(from_id, link)
 
 
@@ -76,5 +76,4 @@ def send_whatsapp_doc(from_id, link):
             "link": link,
         }
     }
-    res = requests.post(settings.GRAPHLY_URL, headers=headers, json=payload)
-    return res.json()
+    requests.post(settings.GRAPHLY_URL, headers=headers, json=payload)
