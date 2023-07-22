@@ -5,7 +5,7 @@ services:
     build: .
     command: gunicorn thuso.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - media_volume:/code/uploads
+      - media_volume:/code/uploads/cover_letters
     expose:
       - 8000
     depends_on:
@@ -16,7 +16,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - media_volume:/code/uploads
+      - media_volume:/code/uploads/cover_letters
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
     ports:
