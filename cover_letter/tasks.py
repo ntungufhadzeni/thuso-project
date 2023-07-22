@@ -40,7 +40,7 @@ def generate_cover_letter(answers, from_id):
 
 @shared_task()
 def generate_pdf(cover_letter, from_id):
-    filename = 'cover_letter.pdf'
+    filename = f'{from_id}.pdf'
 
     options = {
         'encoding': 'UTF-8',
@@ -54,13 +54,13 @@ def generate_pdf(cover_letter, from_id):
     config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
 
     # Saving the File
-    file_path = settings.MEDIA_ROOT + '/cover_letters/{}/'.format(from_id)
+    file_path = settings.MEDIA_ROOT + '/cover_letters/{}'.format(filename)
     os.makedirs(file_path, exist_ok=True)
     pdf_save_path = file_path + filename
     # Save the PDF
     pdfkit.from_string(cover_letter, pdf_save_path, configuration=config, options=options)
 
-    link = 'https://www.' + settings.HOST + '/uploads' + '/cover_letters/{}/{}'.format(from_id, filename)
+    link = 'https://www.' + settings.HOST + '/uploads' + '/{}'.format(filename)
     send_whatsapp_doc.delay(from_id, link)
 
 
