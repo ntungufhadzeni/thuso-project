@@ -54,9 +54,9 @@ def generate_pdf(cover_letter, from_id):
     config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
 
     # Saving the File
-    file_path = settings.MEDIA_ROOT + '/cover_letters/{}'.format(filename)
+    file_path = settings.MEDIA_ROOT + '/cover_letters/'
     os.makedirs(file_path, exist_ok=True)
-    pdf_save_path = file_path + filename
+    pdf_save_path = os.path.join(file_path, filename)
     # Save the PDF
     pdfkit.from_string(cover_letter, pdf_save_path, configuration=config, options=options)
 
