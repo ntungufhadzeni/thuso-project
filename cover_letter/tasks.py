@@ -32,7 +32,7 @@ def generate_cover_letter(answers, from_id):
         presence_penalty=0.0
     )
 
-    cover_letter = response.choices[0].text.strip()
+    cover_letter = response.choices[0].text
     generate_pdf.delay(cover_letter, from_id)  # send cover letter via whatsapp
     answers_repo = AnswerRepository()
     answers_repo.delete(from_id)
