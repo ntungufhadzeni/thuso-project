@@ -17,7 +17,7 @@ DEBUG = False
 
 HOST = env.str('HOST')
 
-ALLOWED_HOSTS = [HOST, 'www.'+HOST, 'localhost', '13.49.243.173']
+ALLOWED_HOSTS = [HOST, 'www.'+HOST, 'localhost', '3db4-197-185-110-197.ngrok-free.app']
 
 # Base url to serve media files
 MEDIA_URL = '/uploads/'
@@ -115,7 +115,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # facebook credentials
 TOKEN = 'Bearer ' + env.str('TOKEN')
-GRAPHLY_URL = env.str('URL')
+GRAPHQL_URL = env.str('URL')
 VERIFY_TOKEN = env.str('VERIFY_TOKEN')
 
 # openai

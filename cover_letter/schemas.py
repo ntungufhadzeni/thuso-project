@@ -1,7 +1,7 @@
 from pydantic_redis import Model
 
 
-class CoverLetter(Model):
+class Answer(Model):
     _primary_key_field: str = 'whatsapp_number'
     whatsapp_number: str
     full_name: str = None

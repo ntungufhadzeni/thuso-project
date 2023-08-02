@@ -2,7 +2,14 @@ from django.db import models
 from django.utils import timezone
 
 
-class CoverLetterSubscriber(models.Model):
+class TimeStampedModel(models.Model):
+    id = models.UUIDField(max_length=34, primary_key=True)
+
+    class Meta:
+        abstract = True
+
+
+class CoverLetterSubscriber(TimeStampedModel):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=11)

@@ -7,12 +7,13 @@ from django.conf import settings
 import openai
 
 from cover_letter.crud import AnswerRepository
+from cover_letter.schemas import Answer
 
 openai.api_key = settings.OPENAI_API_KEY
 
 
 @shared_task()
-def generate_cover_letter(answers, from_id):
+def generate_cover_letter(answers: Answer):
     prompt = f"""Write a cover letter for me. Here is my details:
         Full Name: {answers.full_name}, Address: {answers.address}, Phone: {answers.phone_number},
         Email address: {answers.email}, Job Details: {answers.job_title}, Company Name:{answers.company_name},
@@ -33,7 +34,8 @@ def generate_cover_letter(answers, from_id):
     )
 
     cover_letter = response.choices[0].text
-    generate_pdf.delay(cover_letter, from_id)  # send cover letter via whatsapp
+    from_id = answers.whatsapp_number
+    generate_pdf.delay(cover_letter, )  # send cover letter via whatsapp
     answers_repo = AnswerRepository()
     answers_repo.delete(from_id)
 
@@ -76,4 +78,4 @@ def send_whatsapp_doc(from_id, link):
             "link": link,
         }
     }
-    requests.post(settings.GRAPHLY_URL, headers=headers, json=payload)
+    requests.post(settings.GRAPHQL_URL, headers=headers, json=payload)

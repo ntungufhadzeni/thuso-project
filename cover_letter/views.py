@@ -1,12 +1,15 @@
 from .chat import CoverLetterAssistant
 from django.http import HttpResponse
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.conf import settings
 
+from .crud import AnswerRepository
+
 
 def index(request):
-    return HttpResponse("WhatsApp this number +1 555 067 7930 to generate a cover letter for free.")
+    return render(request, 'cover_letter/home.html')
 
 
 @csrf_exempt
@@ -33,9 +36,9 @@ def whatsapp_webhook(request):
                 whatsapp_id = data['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
                 from_id = data['entry'][0]['changes'][0]['value']['messages'][0]['from']
                 text = data['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
-
-                cover_letter_assistant = CoverLetterAssistant(phone_id, profile_name, whatsapp_id, from_id, text)
-                cover_letter_assistant.send_response()
+                answers_repo = AnswerRepository()
+                cover_letter_assistant = CoverLetterAssistant(answers_repo, from_id, text)
+                cover_letter_assistant.handle_chat()
             else:
                 pass
         else:

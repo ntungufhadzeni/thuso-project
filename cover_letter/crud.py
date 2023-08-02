@@ -1,9 +1,9 @@
 from pydantic_redis import RedisConfig, Store
-from .schemas import CoverLetter
+from .schemas import Answer
 from abc import ABC, abstractmethod
 
 
-class IRepository(ABC):
+class AbstractAnswerRepository(ABC):
     @abstractmethod
     def get_all(self):
         raise NotImplementedError
@@ -13,11 +13,7 @@ class IRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def create(self, pk):
-        raise NotImplementedError
-
-    @abstractmethod
-    def update(self, pk, data):
+    def insert(self, obj: Answer):
         raise NotImplementedError
 
     @abstractmethod
@@ -25,25 +21,21 @@ class IRepository(ABC):
         raise NotImplementedError
 
 
-class AnswerRepository(IRepository):
-    store = Store(name='some_name', redis_config=RedisConfig(db=5, host='redis', port=6379),
+class AnswerRepository(AbstractAnswerRepository):
+    store = Store(name='answers', redis_config=RedisConfig(db=5, host='redis', port=6379),
                   life_span_in_seconds=3600)
-    store.register_model(CoverLetter)
+    store.register_model(Answer)
 
     def get_all(self):
-        return CoverLetter.select()
+        return Answer.select()
 
     def get_by_id(self, pk):
-        return CoverLetter.select(ids=[pk])
+        return Answer.select(ids=[pk])
 
-    def create(self, pk):
-        CoverLetter.insert([CoverLetter(whatsapp_number=pk)])
-        return CoverLetter.select(ids=[pk])
-
-    def update(self, pk, data: dict):
-        CoverLetter.update(_id=pk, data=data)
-        return CoverLetter.select(ids=[pk])
+    def insert(self, obj: Answer):
+        Answer.insert([obj], life_span_seconds=3600)
+        return Answer.select(ids=[obj.whatsapp_number])
 
     def delete(self, pk: str):
-        CoverLetter.delete(ids=[pk])
+        Answer.delete(ids=[pk])
 
