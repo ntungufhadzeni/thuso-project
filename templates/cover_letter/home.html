@@ -1,55 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Generate Cover Letter</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: Arial, sans-serif;
-        }
-        .landing-container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 30px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            text-align: center;
-        }
-        h1 {
-            color: #007bff;
-            font-size: 32px;
-        }
-        p {
-            font-size: 18px;
-        }
-        .whatsapp-link {
-            display: block;
-            margin-top: 20px;
-            font-size: 20px;
-            color: #fff;
-            background-color: #25d366;
-            padding: 10px 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
-        }
-        .whatsapp-link:hover {
-            background-color: #128c7e;
-        }
-        .created-by {
-            font-size: 12px;
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
-    <div class="landing-container">
-        <h1>Generate Cover Letter for Free</h1>
-        <p>WhatsApp this number <strong>+27611202714</strong> to generate a cover letter for free.</p>
-        <a href="https://wa.me/27611202714" class="whatsapp-link">WhatsApp Now</a>
-        <p class="created-by">Created by Ntungufhadzeni Mbudzeni</p>
-    </div>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="landing-container">
+    <h1>Generate Cover Letter for Free</h1>
+    <p>WhatsApp this number <strong>+27611202714</strong> to generate a cover letter for free.</p>
+    <a href="https://wa.me/27611202714" class="whatsapp-link">WhatsApp Now</a>
+    <p class="created-by">Created by Ntungufhadzeni Mbudzeni</p>
+</div>
+{% endblock %}
