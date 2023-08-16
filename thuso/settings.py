@@ -17,7 +17,7 @@ DEBUG = False
 
 HOST = env.str('HOST')
 
-ALLOWED_HOSTS = [HOST, 'www.' + HOST, 'localhost', ]
+ALLOWED_HOSTS = [HOST, 'www.' + HOST, 'localhost',]
 
 # Base url to serve media files
 MEDIA_URL = '/media/'

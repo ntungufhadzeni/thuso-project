@@ -37,7 +37,7 @@ def whatsapp_webhook(request):
                 from_id = data['entry'][0]['changes'][0]['value']['messages'][0]['from']
                 text = data['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
                 subscriber_service = SubscriberService()
-                subscriber = Subscriber(whatsapp_id=whatsapp_id, whatsapp_name=profile_name, whatsapp_phone=from_id)
+                subscriber = Subscriber(whatsapp_name=profile_name, whatsapp_number=from_id)
                 subscriber_service.create(subscriber)
                 cover_letter_assistant = CoverLetterAssistant(from_id, text)
                 cover_letter_assistant.handle_chat()
