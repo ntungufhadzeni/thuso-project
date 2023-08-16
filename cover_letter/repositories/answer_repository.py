@@ -1,6 +1,6 @@
-from pydantic_redis import RedisConfig, Store
-from .schemas import Answer
 from abc import ABC, abstractmethod
+from cover_letter.schemas.answer import Answer
+from pydantic_redis import RedisConfig, Store
 
 
 class AbstractAnswerRepository(ABC):
@@ -38,4 +38,3 @@ class AnswerRepository(AbstractAnswerRepository):
 
     def delete(self, pk: str):
         Answer.delete(ids=[pk])
-

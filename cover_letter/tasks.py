@@ -6,8 +6,9 @@ from celery import shared_task
 from django.conf import settings
 import openai
 
-from cover_letter.crud import AnswerRepository
-from cover_letter.schemas import Answer
+from cover_letter.repositories.answer_repository import AnswerRepository
+from cover_letter.schemas.answer import Answer
+from cover_letter.services.subscriber_service import SubscriberService
 
 openai.api_key = settings.OPENAI_API_KEY
 
@@ -82,5 +83,8 @@ def send_whatsapp_doc(from_id, link):
 
 
 @shared_task(bind=True)
-def debug_task():
-    print('Hello world')
+def send_ad_to_cover_letter_sub(link: str):
+    subscriber_service = SubscriberService()
+    subscribers = subscriber_service.get_all()
+    for subscriber in subscribers:
+        send_whatsapp_doc(subscriber.whatsapp_number, link)

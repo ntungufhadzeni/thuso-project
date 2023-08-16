@@ -21,12 +21,3 @@ app.conf.enable_utc = False
 app.conf.update(timezone='Africa/Johannesburg')
 # Load task modules from all registered Django apps.
 app.autodiscover_tasks()
-
-# CELERY BEAT SETTINGS
-
-app.conf.beat_schedule = {
-    'debug-task-every-day': {
-        'task': 'cover_letter.tasks.debug_task',
-        'schedule': crontab(hour=15, minute=56),
-    }
-}

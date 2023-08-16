@@ -2,9 +2,9 @@ import openai
 import requests
 from django.conf import settings
 
-from .crud import AnswerRepository
-from .schemas import Answer
-from .tasks import generate_cover_letter
+from cover_letter.repositories.answer_repository import AnswerRepository
+from cover_letter.schemas.answer import Answer
+from cover_letter.tasks import generate_cover_letter
 
 from enum import Enum
 
@@ -36,11 +36,11 @@ class Question(Enum):
 
 class CoverLetterAssistant:
 
-    def __init__(self, answers_repo: AnswerRepository, from_id: str, text: str):
+    def __init__(self, from_id: str, text: str):
         self.from_id = from_id
         self.text = text
         self.__answers = None
-        self.__answers_repo = answers_repo
+        self.__answers_repo = AnswerRepository()
 
     def __send_whatsapp_message(self, response):
         headers = {"Authorization": settings.TOKEN}
