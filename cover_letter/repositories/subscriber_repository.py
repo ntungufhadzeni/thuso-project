@@ -30,7 +30,7 @@ class SubscriberRepository(AbstractSubscriberRepository):
         return CoverLetterSubscriber.objects.get(pk)
 
     def create(self, obj: Subscriber):
-        return CoverLetterSubscriber.objects.get_or_create(Subscriber.__dict__)
+        return CoverLetterSubscriber.objects.get_or_create(**obj.dict())
 
     def delete(self, pk):
         return CoverLetterSubscriber.objects.filter(id=pk).delete()

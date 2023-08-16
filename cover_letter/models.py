@@ -14,7 +14,7 @@ class TimeStampedModel(models.Model):
 class CoverLetterSubscriber(TimeStampedModel):
     whatsapp_name = models.CharField(max_length=100)
     whatsapp_id = models.CharField(max_length=100)
-    whatsapp_number = models.CharField(max_length=11)
+    whatsapp_number = models.CharField(max_length=11, unique=True)
     date_created = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
