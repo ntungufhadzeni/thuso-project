@@ -12,7 +12,7 @@ from cover_letter.schemas import Answer
 openai.api_key = settings.OPENAI_API_KEY
 
 
-@shared_task()
+@shared_task(bind=True)
 def generate_cover_letter(answers: Answer):
     prompt = f"""Write a cover letter for me. Here is my details:
         Full Name: {answers.full_name}, Address: {answers.address}, Phone: {answers.phone_number},
@@ -40,7 +40,7 @@ def generate_cover_letter(answers: Answer):
     answers_repo.delete(from_id)
 
 
-@shared_task()
+@shared_task(bind=True)
 def generate_pdf(cover_letter, from_id):
     filename = f'{from_id}.pdf'
 
@@ -62,11 +62,11 @@ def generate_pdf(cover_letter, from_id):
     # Save the PDF
     pdfkit.from_string(cover_letter, pdf_save_path, configuration=config, options=options)
 
-    link = 'https://www.' + settings.HOST + '/uploads' + '/{}'.format(filename)
+    link = 'https://www.' + settings.HOST + '/media/' + 'cover_letters/{}'.format(filename)
     send_whatsapp_doc.delay(from_id, link)
 
 
-@shared_task()
+@shared_task(bind=True)
 def send_whatsapp_doc(from_id, link):
     headers = {"Authorization": settings.TOKEN}
     payload = {
@@ -79,3 +79,8 @@ def send_whatsapp_doc(from_id, link):
         }
     }
     requests.post(settings.GRAPHQL_URL, headers=headers, json=payload)
+
+
+@shared_task(bind=True)
+def debug_task():
+    print('Hello world')

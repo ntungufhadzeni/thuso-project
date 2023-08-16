@@ -3,7 +3,7 @@ version: "3.9"
 services:
   web:
     build: .
-    command: python /code/manage.py runserver 0.0.0.0:8000
+    command: python /code/manage.py runserver 0.0.0.0:8000 --insecure
     volumes:
       - .:/code
     ports:
@@ -11,6 +11,8 @@ services:
     depends_on:
       - db
       - redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=thuso.settings
   db:
     image: postgres:13
     volumes:
@@ -29,6 +31,14 @@ services:
     depends_on:
       - web
       - redis
+  celery-beat:
+    build: .
+    command: celery -A thuso beat -l info
+    volumes:
+      - .:/code
+    depends_on:
+      - web
+      - db
 
 volumes:
   postgres_data:

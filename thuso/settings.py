@@ -17,12 +17,12 @@ DEBUG = False
 
 HOST = env.str('HOST')
 
-ALLOWED_HOSTS = [HOST, 'www.'+HOST, 'localhost', '3db4-197-185-110-197.ngrok-free.app']
+ALLOWED_HOSTS = [HOST, 'www.' + HOST, 'localhost', ]
 
 # Base url to serve media files
-MEDIA_URL = '/uploads/'
+MEDIA_URL = '/media/'
 # Path where media is stored
-MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # Application definition
 
@@ -33,7 +33,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cover_letter.apps.CoverLetterConfig'
+    'cover_letter',
+    'django_celery_results',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -51,7 +53,7 @@ ROOT_URLCONF = 'thuso.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -121,7 +123,14 @@ VERIFY_TOKEN = env.str('VERIFY_TOKEN')
 # openai
 OPENAI_API_KEY = env.str("OPENAI_API_KEY")
 
-
 # celery settings
 CELERY_BROKER_URL = env.str('REDIS_URL')
 CELERY_RESULT_BACKEND = env.str('REDIS_URL')
+CELERY_ACCEPT_CONTENT = {'application/json'}
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Africa/Johannesburg'
+CELERY_RESULT_BACKEND = 'django-db'
+
+# BEAT SETTINGS
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
