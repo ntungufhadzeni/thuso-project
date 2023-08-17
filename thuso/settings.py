@@ -19,7 +19,7 @@ HOST = env.str('HOST')
 
 ALLOWED_HOSTS = [HOST, 'www.' + HOST, 'localhost', ]
 
-CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*']
+CSRF_TRUSTED_ORIGINS = ALLOWED_HOSTS.copy()
 
 # Base url to serve media files
 MEDIA_URL = '/media/'
