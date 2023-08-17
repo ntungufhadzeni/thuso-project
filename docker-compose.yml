@@ -5,6 +5,7 @@ services:
     build: .
     command: gunicorn --timeout 60 thuso.wsgi:application --bind 0.0.0.0:8000
     volumes:
+      - static-volume:/code/staticfiles
       - media-volume:/code/media
     expose:
       - 8000
@@ -16,6 +17,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - static-volume:/code/staticfiles
       - media-volume:/code/media
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
@@ -56,4 +58,6 @@ volumes:
   certbot-etc:
   certbot-var:
   media-volume:
+  static-volume:
+
 
