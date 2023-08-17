@@ -19,6 +19,8 @@ HOST = env.str('HOST')
 
 ALLOWED_HOSTS = [HOST, 'www.' + HOST, 'localhost', ]
 
+CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*']
+
 # Base url to serve media files
 MEDIA_URL = '/media/'
 # Path where media is stored
@@ -123,7 +125,6 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
-
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
