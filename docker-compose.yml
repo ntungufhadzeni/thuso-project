@@ -3,7 +3,7 @@ version: "3.9"
 services:
   web:
     build: .
-    command: gunicorn thuso.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn --timeout 60 thuso.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - media-volume:/code/media
     expose:
