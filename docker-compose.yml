@@ -41,6 +41,7 @@ services:
     depends_on:
       - web
       - redis
+      - db
   celery-beat:
     build: .
     command: celery -A thuso beat -l info
