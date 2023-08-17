@@ -13,7 +13,7 @@ from cover_letter.services.subscriber_service import SubscriberService
 openai.api_key = settings.OPENAI_API_KEY
 
 
-@shared_task(bind=True)
+@shared_task()
 def generate_cover_letter(answers: Answer):
     prompt = f"""Write a cover letter for me. Here is my details:
         Full Name: {answers.full_name}, Address: {answers.address}, Phone: {answers.phone_number},
@@ -41,7 +41,7 @@ def generate_cover_letter(answers: Answer):
     answers_repo.delete(from_id)
 
 
-@shared_task(bind=True)
+@shared_task()
 def generate_pdf(cover_letter, from_id):
     filename = f'{from_id}.pdf'
 
@@ -67,7 +67,7 @@ def generate_pdf(cover_letter, from_id):
     send_whatsapp_doc.delay(from_id, link)
 
 
-@shared_task(bind=True)
+@shared_task()
 def send_whatsapp_doc(from_id, link):
     headers = {"Authorization": settings.TOKEN}
     payload = {
@@ -82,7 +82,7 @@ def send_whatsapp_doc(from_id, link):
     requests.post(settings.GRAPHQL_URL, headers=headers, json=payload)
 
 
-@shared_task(bind=True)
+@shared_task()
 def send_ad_to_cover_letter_sub(link: str):
     subscriber_service = SubscriberService()
     subscribers = subscriber_service.get_all()
