@@ -1,13 +1,13 @@
-from cover_letter.services.chat_service import CoverLetterAssistant
+import json
+
+from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-import json
-from django.conf import settings
 
-from cover_letter.repositories.answer_repository import AnswerRepository
-from cover_letter.services.subscriber_service import SubscriberService
 from cover_letter.schemas.subscriber import Subscriber
+from cover_letter.services.chat_service import CoverLetterAssistant
+from cover_letter.services.subscriber_service import SubscriberService
 
 
 def index(request):
@@ -33,14 +33,16 @@ def whatsapp_webhook(request):
         if 'contacts' in data['entry'][0]['changes'][0]['value']:
             if data['object'] == 'whatsapp_business_account':
                 profile_name = data['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']
-                whatsapp_id = data['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
                 from_id = data['entry'][0]['changes'][0]['value']['messages'][0]['from']
                 text = data['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
-                subscriber_service = SubscriberService()
-                subscriber = Subscriber(whatsapp_name=profile_name, whatsapp_number=from_id)
-                subscriber_service.create(subscriber)
-                cover_letter_assistant = CoverLetterAssistant(from_id, text)
-                cover_letter_assistant.handle_chat()
+                if text:
+                    subscriber_service = SubscriberService()
+                    subscriber = Subscriber(whatsapp_name=profile_name, whatsapp_number=from_id)
+                    subscriber_service.create(subscriber)
+                    cover_letter_assistant = CoverLetterAssistant(from_id, text)
+                    cover_letter_assistant.handle_chat()
+                else:
+                    pass
             else:
                 pass
         else:
