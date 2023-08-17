@@ -13,7 +13,7 @@ env.read_env(env_file, recurse=False)
 SECRET_KEY = env.str('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 HOST = env.str('HOST')
 
@@ -139,11 +139,6 @@ OPENAI_API_KEY = env.str("OPENAI_API_KEY")
 # celery settings
 CELERY_BROKER_URL = env.str('REDIS_URL')
 CELERY_RESULT_BACKEND = env.str('REDIS_URL')
-CELERY_ACCEPT_CONTENT = {'application/json'}
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Africa/Johannesburg'
-CELERY_RESULT_BACKEND = 'django-db'
 
 # BEAT SETTINGS
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'

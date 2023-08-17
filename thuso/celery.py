@@ -1,7 +1,6 @@
 import os
 
 from celery import Celery
-from celery.schedules import crontab
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'thuso.settings')
@@ -18,6 +17,16 @@ app.control.enable_events(reply=True)
 
 app.conf.enable_utc = False
 
-app.conf.update(timezone='Africa/Johannesburg')
+# Set timezone for Celery
+app.conf.timezone = 'Africa/Johannesburg'
+
+# Specify the JSON serialization format
+app.conf.accept_content = ['application/json']
+app.conf.result_serializer = 'json'
+app.conf.task_serializer = 'json'
+
+# Configure the result backend to use Django database
+app.conf.result_backend = 'django-db'
+
 # Load task modules from all registered Django apps.
 app.autodiscover_tasks()

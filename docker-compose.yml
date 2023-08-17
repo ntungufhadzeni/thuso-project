@@ -8,9 +8,9 @@ services:
       - static-volume:/code/staticfiles
       - media-volume:/code/media
     environment:
-      - postgres_name=postgres
-      - postgres_user=postgres
-      - postgres_password=postgres
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
     depends_on:
       - db
       - redis
@@ -32,7 +32,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - postgres_password=postgres
+      - POSTGRES_PASSWORD=postgres
   redis:
     image: redis:latest
     ports:
@@ -43,9 +43,9 @@ services:
     volumes:
       - .:/code
     environment:
-      - postgres_name=postgres
-      - postgres_user=postgres
-      - postgres_password=postgres
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
     depends_on:
       - web
       - redis
@@ -56,9 +56,9 @@ services:
     volumes:
       - .:/code
     environment:
-      - postgres_name=postgres
-      - postgres_user=postgres
-      - postgres_password=postgres
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
     depends_on:
       - web
       - db
@@ -69,5 +69,3 @@ volumes:
   certbot-var:
   media-volume:
   static-volume:
-
-
