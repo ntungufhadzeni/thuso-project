@@ -9,12 +9,6 @@ ENV PYTHONUNBUFFERED 1
 # Set work directory
 WORKDIR /code
 
-# Add a new user
-RUN useradd -ms /bin/bash app
-
-# Change ownership of the work directory to the new user
-RUN chown -R app:app /code
-
 # Install dependencies
 COPY ./requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
@@ -25,5 +19,3 @@ RUN apt-get update && apt-get install -y wkhtmltopdf
 # Copy project
 COPY . .
 
-# Switch to the new user
-USER app
