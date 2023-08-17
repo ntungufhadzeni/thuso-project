@@ -19,3 +19,5 @@ RUN apt-get update && apt-get install -y wkhtmltopdf
 # Copy project
 COPY . .
 
+EXPOSE 8000
+

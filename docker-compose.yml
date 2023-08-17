@@ -7,18 +7,15 @@ services:
     volumes:
       - static-volume:/code/staticfiles
       - media-volume:/code/media
-    expose:
-      - 8000
     depends_on:
       - db
       - redis
   nginx:
-    image: nginx:latest
+    build: ./nginx
     restart: unless-stopped
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - static-volume:/code/staticfiles
-      - media-volume:/code/media
+      - static-volume:/home/staticfiles
+      - media-volume:/home/media
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
     ports:
