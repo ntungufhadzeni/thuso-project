@@ -68,8 +68,6 @@ TEMPLATES = [
     },
 ]
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 WSGI_APPLICATION = 'thuso.wsgi.application'
 
 DATABASES = {
@@ -81,6 +79,13 @@ DATABASES = {
         "HOST": "db",  # set in docker-compose.dev.yml
         "PORT": 5432,  # default PostgreSQL port
     }
+}
+
+STORAGES = {
+    # ...
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
 }
 
 # Password validation
@@ -117,6 +122,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
