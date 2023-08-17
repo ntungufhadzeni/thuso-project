@@ -119,7 +119,16 @@ class CoverLetterAssistant:
 
     def handle_chat(self):
         answers = self.__answers_repo.get_by_id(self.from_id)
-        if len(answers) == 0 or self.text.lower() == 'reset':
+        if len(answers) == 0 and self.text.lower() == 'reset':
+            self.__answers_repo.delete(self.from_id)
+            message = 'Welcome to the AI Cover Letter creator 😀. I am going to help you write a cover letter that ' \
+                      'will help you land your dream job. If you make a mistake during the process, reply with ' \
+                      '"reset" to start over.'
+            self.__send_whatsapp_message(message)
+            self.__send_whatsapp_message('To get started, answer this question: \n')
+            self.__send_whatsapp_message(Question.FULL_NAME.value)
+            self.__answers_repo.insert(Answer(whatsapp_number=self.from_id))
+        elif len(answers) == 0:
             message = 'Welcome to the AI Cover Letter creator 😀. I am going to help you write a cover letter that ' \
                       'will help you land your dream job. If you make a mistake during the process, reply with ' \
                       '"reset" to start over.'
