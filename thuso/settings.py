@@ -16,10 +16,10 @@ ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
 CSRF_TRUSTED_ORIGINS = ['https://*.' + HOST, ]
 
-# Base url to serve mediafiles files
-MEDIA_URL = '/mediafiles/'
+# Base url to serve media files
+MEDIA_URL = '/media/'
 # Path where mediafiles is stored
-MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
 # Application definition
 

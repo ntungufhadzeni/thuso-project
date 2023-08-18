@@ -36,7 +36,7 @@ def generate_cover_letter(from_id: str):
     )
     html = response.choices[0].text
 
-    generate_pdf.delay(html, from_id)  # send cover letter via whatsapp
+    generate_pdf.apply_async(kwargs={'html': html, 'from': 'from_id'})  # send cover letter via whatsapp
     answers_repo.delete(from_id)
 
 
@@ -64,7 +64,7 @@ def generate_pdf(html, from_id):
     pdfkit.from_string(html, pdf_save_path, configuration=config, options=options)
 
     link = 'https://' + settings.HOST + '/media/' + 'cover_letters/{}'.format(filename)
-    send_whatsapp_doc.delay(from_id, link)
+    send_whatsapp_doc.apply_async(kwargs={'from_id': from_id, 'link': link})
 
 
 @shared_task
