@@ -36,7 +36,7 @@ def generate_cover_letter(from_id: str):
     )
     html = response.choices[0].text
 
-    generate_pdf.apply_async(kwargs={'html': html, 'from': 'from_id'})  # send cover letter via whatsapp
+    generate_pdf.apply_async(kwargs={'html': html, 'from_id': from_id})  # send cover letter via whatsapp
     answers_repo.delete(from_id)
 
 
