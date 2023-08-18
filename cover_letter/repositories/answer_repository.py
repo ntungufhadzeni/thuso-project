@@ -17,7 +17,11 @@ class AbstractAnswerRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def delete(self, pk):
+    def update(self, pk: str, data: dict):
+        raise NotImplementedError
+
+    @abstractmethod
+    def delete(self, pk: str):
         raise NotImplementedError
 
 
@@ -32,9 +36,12 @@ class AnswerRepository(AbstractAnswerRepository):
     def get_by_id(self, pk):
         return Answer.select(ids=[pk])
 
+    def update(self, pk: str, data: dict):
+        return Answer.update(_id=pk, data=data, life_span_seconds=3600)
+
     def insert(self, obj: Answer):
         Answer.insert([obj], life_span_seconds=3600)
         return Answer.select(ids=[obj.whatsapp_number])
 
     def delete(self, pk: str):
-        Answer.delete(ids=[pk])
+        return Answer.delete(ids=[pk])

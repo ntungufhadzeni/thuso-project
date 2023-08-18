@@ -79,7 +79,7 @@ def send_whatsapp_doc(from_id, link):
             "link": link,
         }
     }
-    requests.post(settings.GRAPHQL_URL, headers=headers, json=payload)
+    return requests.post(settings.GRAPHQL_URL, headers=headers, json=payload)
 
 
 @shared_task()
