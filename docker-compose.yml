@@ -6,7 +6,7 @@ services:
     command: gunicorn --timeout 60 thuso.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static-volume:/code/staticfiles
-      - mediafiles-volume:/code/mediafiles
+      - media-volume:/code/mediafiles
     env_file:
       - .env
     depends_on:
@@ -17,7 +17,7 @@ services:
     restart: unless-stopped
     volumes:
       - static-volume:/home/staticfiles
-      - mediafiles-volume:/home/mediafiles
+      - media-volume:/home/mediafiles
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
     ports:
