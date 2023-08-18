@@ -4,21 +4,23 @@ services:
   web:
     build: .
     command: python /code/manage.py runserver 0.0.0.0:8000 --insecure
-    volumes:
-      - .:/code
     ports:
       - "8000:8000"
+    volumes:
+      - .:/code
+    env_file:
+      - .env.dev
     depends_on:
       - db
       - redis
-    environment:
-      - DJANGO_SETTINGS_MODULE=thuso.settings
   db:
     image: postgres:13
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - "POSTGRES_HOST_AUTH_METHOD=trust"
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
   redis:
     image: redis:latest
     ports:
@@ -28,16 +30,20 @@ services:
     command: celery -A thuso worker -l info
     volumes:
       - .:/code
+    env_file:
+      - .env.dev
     depends_on:
-      - web
+      - db
       - redis
   celery-beat:
     build: .
     command: celery -A thuso beat -l info
     volumes:
       - .:/code
+    env_file:
+      - .env.dev
     depends_on:
-      - web
+      - redis
       - db
 
 volumes:

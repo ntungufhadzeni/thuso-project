@@ -105,13 +105,13 @@ class CoverLetterAssistant:
         elif not self.__answers.closing:
             self.__answers.closing = self.text
             self.__answers_repo.update(self.from_id, self.__answers.dict(include={'closing'}))
-            generate_cover_letter.delay(self.__answers)
+            generate_cover_letter.delay(self.from_id)
             self.__send_whatsapp_message(
                 "😀 Great we have everything we need to create your "
                 "Cover Letter. We will send it to you when we are "
                 "done . . . . ")
         else:
-            generate_cover_letter.delay(self.__answers)
+            generate_cover_letter.delay(self.from_id)
             self.__send_whatsapp_message(
                 "😀 Great we have everything we need to create your "
                 "Cover Letter. We will send it to you when we are "

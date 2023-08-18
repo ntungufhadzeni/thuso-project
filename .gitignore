@@ -85,7 +85,7 @@ __pycache__/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-media
+mediafiles
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
 # in your Git repositories. Update and uncomment the following line accordingly.
@@ -214,6 +214,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+.env.dev
 .env
 .venv
 env/

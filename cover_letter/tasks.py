@@ -7,14 +7,15 @@ from django.conf import settings
 import openai
 
 from cover_letter.repositories.answer_repository import AnswerRepository
-from cover_letter.schemas.answer import Answer
 from cover_letter.services.subscriber_service import SubscriberService
 
 openai.api_key = settings.OPENAI_API_KEY
 
 
-@shared_task()
-def generate_cover_letter(answers: Answer):
+@shared_task
+def generate_cover_letter(from_id: str):
+    answers_repo = AnswerRepository()
+    answers = answers_repo.get_by_id(from_id)[0]
     prompt = f"""Write a cover letter for me. Here is my details:
         Full Name: {answers.full_name}, Address: {answers.address}, Phone: {answers.phone_number},
         Email address: {answers.email}, Job Details: {answers.job_title}, Company Name:{answers.company_name},
@@ -33,16 +34,15 @@ def generate_cover_letter(answers: Answer):
         frequency_penalty=0.0,
         presence_penalty=0.0
     )
+    html = response.choices[0].text
 
-    cover_letter = response.choices[0].text
-    from_id = answers.whatsapp_number
-    generate_pdf.delay(cover_letter, from_id)  # send cover letter via whatsapp
-    answers_repo = AnswerRepository()
+    generate_pdf.delay(html, from_id)  # send cover letter via whatsapp
     answers_repo.delete(from_id)
 
 
-@shared_task()
-def generate_pdf(cover_letter, from_id):
+@shared_task
+def generate_pdf(html, from_id):
+
     filename = f'{from_id}.pdf'
 
     options = {
@@ -61,13 +61,13 @@ def generate_pdf(cover_letter, from_id):
     os.makedirs(file_path, exist_ok=True)
     pdf_save_path = os.path.join(file_path, filename)
     # Save the PDF
-    pdfkit.from_string(cover_letter, pdf_save_path, configuration=config, options=options)
+    pdfkit.from_string(html, pdf_save_path, configuration=config, options=options)
 
-    link = 'https://www.' + settings.HOST + '/media/' + 'cover_letters/{}'.format(filename)
+    link = 'https://' + settings.HOST + '/media/' + 'cover_letters/{}'.format(filename)
     send_whatsapp_doc.delay(from_id, link)
 
 
-@shared_task()
+@shared_task
 def send_whatsapp_doc(from_id, link):
     headers = {"Authorization": settings.TOKEN}
     payload = {
@@ -82,7 +82,7 @@ def send_whatsapp_doc(from_id, link):
     return requests.post(settings.GRAPHQL_URL, headers=headers, json=payload)
 
 
-@shared_task()
+@shared_task
 def send_ad_to_cover_letter_sub(link: str):
     subscriber_service = SubscriberService()
     subscribers = subscriber_service.get_all()

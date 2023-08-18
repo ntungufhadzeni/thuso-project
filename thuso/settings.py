@@ -1,30 +1,25 @@
 from pathlib import Path
-from environs import Env
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env_file = os.path.join(BASE_DIR, ".env")
-env = Env()
-env.read_env(env_file, recurse=False)
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env.str('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = bool(os.getenv('DEBUG'))
 
-HOST = env.str('HOST')
+HOST = os.getenv('HOST')
 
-ALLOWED_HOSTS = [HOST, 'www.' + HOST, 'localhost', ]
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
 CSRF_TRUSTED_ORIGINS = ['https://*.' + HOST, ]
 
-# Base url to serve media files
-MEDIA_URL = '/media/'
-# Path where media is stored
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+# Base url to serve mediafiles files
+MEDIA_URL = '/mediafiles/'
+# Path where mediafiles is stored
+MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles/')
 
 # Application definition
 
@@ -34,10 +29,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'cover_letter',
-    'django_celery_results',
     'django_celery_beat',
 ]
 
@@ -73,12 +66,12 @@ WSGI_APPLICATION = 'thuso.wsgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "postgres",
-        "USER": "postgres",
-        "PASSWORD": "postgres",
-        "HOST": "db",  # set in docker-compose.dev.yml
-        "PORT": 5432,  # default PostgreSQL port
+        "ENGINE": os.getenv("SQL_ENGINE"),
+        "NAME": os.getenv("SQL_DATABASE"),
+        "USER": os.getenv("SQL_USER"),
+        "PASSWORD": os.getenv("SQL_PASSWORD"),
+        "HOST": os.getenv("SQL_HOST"),
+        "PORT": os.getenv("SQL_PORT"),
     }
 }
 
@@ -117,28 +110,20 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-    },
-}
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # facebook credentials
-TOKEN = 'Bearer ' + env.str('TOKEN')
-GRAPHQL_URL = env.str('URL')
-VERIFY_TOKEN = env.str('VERIFY_TOKEN')
+TOKEN = 'Bearer ' + os.getenv('TOKEN')
+GRAPHQL_URL = os.getenv('URL')
+VERIFY_TOKEN = os.getenv('VERIFY_TOKEN')
 
 # openai
-OPENAI_API_KEY = env.str("OPENAI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # celery settings
-CELERY_BROKER_URL = env.str('REDIS_URL')
-CELERY_RESULT_BACKEND = env.str('REDIS_URL')
+CELERY_BROKER_URL = os.getenv('REDIS_URL')
+CELERY_RESULT_BACKEND = os.getenv('REDIS_URL')
+CELERY_TIMEZONE = 'Africa/Johannesburg'
 
 # BEAT SETTINGS
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'

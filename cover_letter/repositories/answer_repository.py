@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from cover_letter.schemas.answer import Answer
 from pydantic_redis import RedisConfig, Store
+from typing import List
 
 
 class AbstractAnswerRepository(ABC):
@@ -33,7 +34,7 @@ class AnswerRepository(AbstractAnswerRepository):
     def get_all(self):
         return Answer.select()
 
-    def get_by_id(self, pk):
+    def get_by_id(self, pk) -> List[Answer]:
         return Answer.select(ids=[pk])
 
     def update(self, pk: str, data: dict):

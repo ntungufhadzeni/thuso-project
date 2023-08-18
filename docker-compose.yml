@@ -6,11 +6,9 @@ services:
     command: gunicorn --timeout 60 thuso.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static-volume:/code/staticfiles
-      - media-volume:/code/media
-    environment:
-      - DB_NAME=postgres
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
+      - mediafiles-volume:/code/mediafiles
+    env_file:
+      - .env
     depends_on:
       - db
       - redis
@@ -19,7 +17,7 @@ services:
     restart: unless-stopped
     volumes:
       - static-volume:/home/staticfiles
-      - media-volume:/home/media
+      - mediafiles-volume:/home/mediafiles
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
     ports:
@@ -32,6 +30,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
   redis:
     image: redis:latest
@@ -42,12 +42,9 @@ services:
     command: celery -A thuso worker -l info
     volumes:
       - .:/code
-    environment:
-      - DB_NAME=postgres
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
+    env_file:
+      - .env
     depends_on:
-      - web
       - redis
       - db
   celery-beat:
@@ -55,12 +52,10 @@ services:
     command: celery -A thuso beat -l info
     volumes:
       - .:/code
-    environment:
-      - DB_NAME=postgres
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
+    env_file:
+      - .env
     depends_on:
-      - web
+      - redis
       - db
 
 volumes:
