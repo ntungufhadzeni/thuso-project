@@ -4,7 +4,7 @@ from django.conf import settings
 
 from cover_letter.repositories.answer_repository import AnswerRepository
 from cover_letter.schemas.answer import Answer
-from cover_letter.tasks import generate_cover_letter
+from cover_letter.tasks import generate_prompt
 
 from enum import Enum
 
@@ -105,13 +105,13 @@ class CoverLetterAssistant:
         elif not self.__answers.closing:
             self.__answers.closing = self.text
             self.__answers_repo.update(self.from_id, self.__answers.dict(include={'closing'}))
-            generate_cover_letter.apply_async(args=[self.from_id])
+            generate_prompt.apply_async(args=[self.from_id])
             self.__send_whatsapp_message(
                 "😀 Great we have everything we need to create your "
                 "Cover Letter. We will send it to you when we are "
                 "done . . . . ")
         else:
-            generate_cover_letter.apply_async(args=[self.from_id])
+            generate_prompt.apply_async(args=[self.from_id])
             self.__send_whatsapp_message(
                 "😀 Great we have everything we need to create your "
                 "Cover Letter. We will send it to you when we are "

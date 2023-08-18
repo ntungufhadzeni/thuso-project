@@ -13,7 +13,7 @@ openai.api_key = settings.OPENAI_API_KEY
 
 
 @shared_task
-def generate_cover_letter(from_id: str):
+def generate_prompt(from_id: str):
     answers_repo = AnswerRepository()
     answers = answers_repo.get_by_id(from_id)[0]
     prompt = f"""Write a cover letter for me. Here is my details:
@@ -23,6 +23,12 @@ def generate_cover_letter(from_id: str):
         Skills and Qualifications: {answers.skills_and_qualifications}, Achievements and Accomplishments: {answers.achievements},
         Motivation: {answers.motivation}, Closing: {answers.closing}. Return cover letter body only as html."""
 
+    generate_cover_letter.apply_async(kwargs={'prompt': prompt, 'from_id': from_id})  # send cover letter via whatsapp
+    answers_repo.delete(from_id)
+
+
+@shared_task
+def generate_cover_letter(prompt, from_id):
     response = openai.Completion.create(
         engine='text-davinci-003',
         prompt=prompt,
@@ -34,14 +40,8 @@ def generate_cover_letter(from_id: str):
         frequency_penalty=0.0,
         presence_penalty=0.0
     )
+
     html = response.choices[0].text
-
-    generate_pdf.apply_async(kwargs={'html': html, 'from_id': from_id})  # send cover letter via whatsapp
-    answers_repo.delete(from_id)
-
-
-@shared_task
-def generate_pdf(html, from_id):
 
     filename = f'{from_id}.pdf'
 
