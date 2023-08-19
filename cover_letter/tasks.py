@@ -22,7 +22,7 @@ def generate_prompt(from_id: str):
         Email address: {answers.email}, Job Details: {answers.job_title}, Company Name:{answers.company_name},
         Company Address: {answers.company_address}, Salutation: {answers.hiring_manager}, Introduction: {answers.introduction},
         Skills and Qualifications: {answers.skills_and_qualifications}, Achievements and Accomplishments: {answers.achievements},
-        Motivation: {answers.motivation}, Closing: {answers.closing}. Return cover letter body only as html."""
+        Motivation: {answers.motivation}, Closing: {answers.closing}. Return answer as html."""
 
     generate_cover_letter.delay(prompt=prompt, to=from_id)  # send cover letter via whatsapp
     answers_repo.delete(from_id)
@@ -70,14 +70,17 @@ def generate_cover_letter(prompt, to):
     # Save the PDF
     try:
         config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
-        pdfkit.from_string(html, pdf_save_path, configuration=config, options=options)
+        success = pdfkit.from_string(html, pdf_save_path, configuration=config, options=options, verbose=True)
         time.sleep(30)
     except OSError:
         return "wkhtmltopdf not present in PATH"
 
-    link = 'https://' + settings.HOST + '/media/' + 'cover_letters/{}'.format(filename)
-    send_whatsapp_doc.delay(to=to, link=link)
-    return 'pdf generated'
+    if success:
+        link = 'https://' + settings.HOST + '/media/' + 'cover_letters/{}'.format(filename)
+        send_whatsapp_doc.delay(to=to, link=link)
+        return 'pdf generated'
+    else:
+        return 'pdf not generated'
 
 
 @shared_task(name='Send whatsApp document')
