@@ -58,15 +58,15 @@ def generate_cover_letter(prompt, from_id):
     config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
 
     # Saving the File
-    file_path = settings.MEDIA_ROOT + '/cover_letters/'
+    file_path = os.path.join(settings.MEDIA_ROOT, 'cover_letters')
     os.makedirs(file_path, exist_ok=True)
     pdf_save_path = os.path.join(file_path, filename)
     # Save the PDF
     pdfkit.from_string(html, pdf_save_path, configuration=config, options=options)
 
-    link = 'https://' + settings.HOST + '/media/' + 'cover_letters/{}'.format(filename)
-    send_whatsapp_doc.delay(from_id=from_id, link=link)
     if os.path.exists(pdf_save_path):
+        link = 'https://' + settings.HOST + '/media/' + 'cover_letters/{}'.format(filename)
+        send_whatsapp_doc.delay(from_id=from_id, link=link)
         return 'pdf generated'
     else:
         return 'pdf not generated'
@@ -85,7 +85,7 @@ def send_whatsapp_doc(from_id, link):
         }
     }
     res = requests.post(settings.GRAPHQL_URL, headers=headers, json=payload)
-    return res.status_code
+    return res.json()
 
 
 @shared_task(name='Send advert to cover letter subscribers')
