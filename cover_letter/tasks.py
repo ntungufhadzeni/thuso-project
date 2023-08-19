@@ -23,13 +23,13 @@ def generate_prompt(from_id: str):
         Skills and Qualifications: {answers.skills_and_qualifications}, Achievements and Accomplishments: {answers.achievements},
         Motivation: {answers.motivation}, Closing: {answers.closing}. Return cover letter body only as html."""
 
-    generate_cover_letter.delay(prompt=prompt, from_id=from_id)  # send cover letter via whatsapp
+    generate_cover_letter.delay(prompt=prompt, to=from_id)  # send cover letter via whatsapp
     answers_repo.delete(from_id)
     return 'success'
 
 
 @shared_task(name='Generate cover letter')
-def generate_cover_letter(prompt, from_id):
+def generate_cover_letter(prompt, to):
     response = openai.Completion.create(
         engine='text-davinci-003',
         prompt=prompt,
@@ -44,7 +44,7 @@ def generate_cover_letter(prompt, from_id):
 
     html = response.choices[0].text
 
-    filename = f'{from_id}.pdf'
+    filename = f'{to}.pdf'
 
     options = {
         'encoding': 'UTF-8',
@@ -55,30 +55,29 @@ def generate_cover_letter(prompt, from_id):
         ],
     }
 
-    config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
-
     # Saving the File
     file_path = os.path.join(settings.MEDIA_ROOT, 'cover_letters')
     os.makedirs(file_path, exist_ok=True)
     pdf_save_path = os.path.join(file_path, filename)
     # Save the PDF
-    pdfkit.from_string(html, pdf_save_path, configuration=config, options=options)
+    try:
+        config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+        pdfkit.from_string(html, pdf_save_path, configuration=config, options=options)
+    except OSError:
+        return "wkhtmltopdf not present in PATH"
 
-    if os.path.exists(pdf_save_path):
-        link = 'https://' + settings.HOST + '/media/' + 'cover_letters/{}'.format(filename)
-        send_whatsapp_doc.delay(from_id=from_id, link=link)
-        return 'pdf generated'
-    else:
-        return 'pdf not generated'
+    link = 'https://' + settings.HOST + '/media/' + 'cover_letters/{}'.format(filename)
+    send_whatsapp_doc.apply_async(countdown=30, kwargs={'to': to, 'link': link})
+    return 'pdf generated'
 
 
 @shared_task(name='Send whatsApp document')
-def send_whatsapp_doc(from_id, link):
+def send_whatsapp_doc(to, link):
     headers = {"Authorization": settings.TOKEN}
     payload = {
         "messaging_product": "whatsapp",
         "recipient_type": "individual",
-        "to": from_id,
+        "to": to,
         "type": "document",
         "document": {
             "link": link,
