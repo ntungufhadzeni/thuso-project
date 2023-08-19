@@ -60,6 +60,13 @@ def generate_cover_letter(prompt, to):
     file_path = os.path.join(settings.MEDIA_ROOT, 'cover_letters')
     os.makedirs(file_path, exist_ok=True)
     pdf_save_path = os.path.join(file_path, filename)
+
+    # delete old pdf
+    try:
+        os.unlink(pdf_save_path)
+    except FileNotFoundError:
+        print("File is not present in the system.")
+
     # Save the PDF
     try:
         config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
