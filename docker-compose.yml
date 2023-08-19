@@ -20,7 +20,7 @@ services:
       - media-volume:/home/mediafiles
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
-      - - ./htpasswd:/etc/nginx/.htpasswd
+      - ./htpasswd:/etc/nginx/.htpasswd
     ports:
       - "80:80"
       - "443:443"
