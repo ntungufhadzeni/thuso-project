@@ -1,10 +1,10 @@
 import os
 
+import openai
 import pdfkit
 import requests
 from celery import shared_task
 from django.conf import settings
-import openai
 
 from cover_letter.repositories.answer_repository import AnswerRepository
 from cover_letter.services.subscriber_service import SubscriberService
@@ -12,7 +12,7 @@ from cover_letter.services.subscriber_service import SubscriberService
 openai.api_key = settings.OPENAI_API_KEY
 
 
-@shared_task
+@shared_task(name='Generate prompt')
 def generate_prompt(from_id: str):
     answers_repo = AnswerRepository()
     answers = answers_repo.get_by_id(from_id)[0]
@@ -23,11 +23,12 @@ def generate_prompt(from_id: str):
         Skills and Qualifications: {answers.skills_and_qualifications}, Achievements and Accomplishments: {answers.achievements},
         Motivation: {answers.motivation}, Closing: {answers.closing}. Return cover letter body only as html."""
 
-    generate_cover_letter.apply_async(kwargs={'prompt': prompt, 'from_id': from_id})  # send cover letter via whatsapp
+    generate_cover_letter.delay(prompt=prompt, from_id=from_id)  # send cover letter via whatsapp
     answers_repo.delete(from_id)
+    return 'success'
 
 
-@shared_task
+@shared_task(name='Generate cover letter')
 def generate_cover_letter(prompt, from_id):
     response = openai.Completion.create(
         engine='text-davinci-003',
@@ -64,10 +65,14 @@ def generate_cover_letter(prompt, from_id):
     pdfkit.from_string(html, pdf_save_path, configuration=config, options=options)
 
     link = 'https://' + settings.HOST + '/media/' + 'cover_letters/{}'.format(filename)
-    send_whatsapp_doc.apply_async(kwargs={'from_id': from_id, 'link': link})
+    send_whatsapp_doc.delay(from_id=from_id, link=link)
+    if os.path.exists(pdf_save_path):
+        return 'pdf generated'
+    else:
+        return 'pdf not generated'
 
 
-@shared_task
+@shared_task(name='Send whatsApp document')
 def send_whatsapp_doc(from_id, link):
     headers = {"Authorization": settings.TOKEN}
     payload = {
@@ -79,10 +84,11 @@ def send_whatsapp_doc(from_id, link):
             "link": link,
         }
     }
-    requests.post(settings.GRAPHQL_URL, headers=headers, json=payload)
+    res = requests.post(settings.GRAPHQL_URL, headers=headers, json=payload)
+    return res.status_code
 
 
-@shared_task
+@shared_task(name='Send advert to cover letter subscribers')
 def send_ad_to_cover_letter_sub(link: str):
     subscriber_service = SubscriberService()
     subscribers = subscriber_service.get_all()
