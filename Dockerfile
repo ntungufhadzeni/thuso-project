@@ -20,6 +20,8 @@ RUN apt-get update && apt-get install -y wkhtmltopdf
 # Copy project
 COPY . .
 
+# Set permissions for the /app directory
+RUN chmod -R 777 /code
 
 EXPOSE 8000
 

@@ -2,11 +2,14 @@ version: "3.9"
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      args:
+        - BUILD_NO_CACHE=true
     command: gunicorn --timeout 60 thuso.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - static-volume:/code/staticfiles
-      - media-volume:/code/mediafiles
+      - static-volume:/code/staticfiles:rw
+      - media-volume:/code/mediafiles:rw
     env_file:
       - .env
     depends_on:
@@ -16,8 +19,8 @@ services:
     build: ./nginx
     restart: unless-stopped
     volumes:
-      - static-volume:/code/staticfiles
-      - media-volume:/code/mediafiles
+      - static-volume:/code/staticfiles:rw
+      - media-volume:/code/mediafiles:rw
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
     ports:
