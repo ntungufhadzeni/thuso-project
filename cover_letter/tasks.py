@@ -1,4 +1,5 @@
 import os
+import time
 
 import openai
 import pdfkit
@@ -63,11 +64,12 @@ def generate_cover_letter(prompt, to):
     try:
         config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
         pdfkit.from_string(html, pdf_save_path, configuration=config, options=options)
+        time.sleep(30)
     except OSError:
         return "wkhtmltopdf not present in PATH"
 
     link = 'https://' + settings.HOST + '/media/' + 'cover_letters/{}'.format(filename)
-    send_whatsapp_doc.apply_async(countdown=30, kwargs={'to': to, 'link': link})
+    send_whatsapp_doc.delay(to=to, link=link)
     return 'pdf generated'
 
 
