@@ -13,7 +13,7 @@ from cover_letter.services.subscriber_service import SubscriberService
 openai.api_key = settings.OPENAI_API_KEY
 
 
-@shared_task(name='Generate prompt')
+@shared_task(name='generate prompt')
 def generate_prompt(from_id: str):
     answers_repo = AnswerRepository()
     answers = answers_repo.get_by_id(from_id)[0]
@@ -22,15 +22,15 @@ def generate_prompt(from_id: str):
         Email address: {answers.email}, Job Details: {answers.job_title}, Company Name:{answers.company_name},
         Company Address: {answers.company_address}, Salutation: {answers.hiring_manager}, Introduction: {answers.introduction},
         Skills and Qualifications: {answers.skills_and_qualifications}, Achievements and Accomplishments: {answers.achievements},
-        Motivation: {answers.motivation}, Closing: {answers.closing}. Return answer as html."""
+        Motivation: {answers.motivation}, Closing: {answers.closing}. Return answer as html_letters."""
 
-    generate_cover_letter.delay(prompt=prompt, to=from_id)  # send cover letter via whatsapp
+    generate_html.delay(prompt=prompt, to=from_id)  # send cover letter via whatsapp
     answers_repo.delete(from_id)
     return 'success'
 
 
-@shared_task(name='Generate cover letter')
-def generate_cover_letter(prompt, to):
+@shared_task(name='generate html')
+def generate_html(prompt, to):
     response = openai.Completion.create(
         engine='text-davinci-003',
         prompt=prompt,
@@ -45,8 +45,19 @@ def generate_cover_letter(prompt, to):
 
     html = response.choices[0].text
 
-    filename = f'{to}.pdf'
+    # create html_letters
+    html_file_path = os.path.join(settings.BASE_DIR, 'cover_letter', 'html_letters', f'{to}.html')
+    os.makedirs(os.path.join(settings.BASE_DIR, 'cover_letter', 'html_letters'), exist_ok=True)
+    with open(html_file_path, 'w') as f:
+        f.write(html)
+        f.close()
+    generate_pdf.delay(to=to)
+    return "HTML created"
 
+
+@shared_task(name='generate pdf')
+def generate_pdf(to):
+    filename = f'{to}.pdf'
     options = {
         'page-size': 'A4',
         'margin-top': '0.75in',
@@ -60,16 +71,11 @@ def generate_cover_letter(prompt, to):
     os.makedirs(file_path, exist_ok=True)
     pdf_save_path = os.path.join(file_path, filename)
 
-    # delete old pdf
-    try:
-        os.unlink(pdf_save_path)
-    except FileNotFoundError:
-        print("File is not present in the system.")
-
     # Save the PDF
     try:
+        html_file_path = os.path.join(settings.BASE_DIR, 'cover_letter', 'html_letters', f'{to}.html')
         config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
-        success = pdfkit.from_string(html, pdf_save_path, configuration=config, options=options, verbose=True)
+        success = pdfkit.from_file(html_file_path, pdf_save_path, configuration=config, options=options, verbose=True)
         time.sleep(30)
     except OSError:
         return "wkhtmltopdf not present in PATH"
@@ -77,13 +83,12 @@ def generate_cover_letter(prompt, to):
     if success:
         link = 'https://' + settings.HOST + '/media/' + 'cover_letters/{}'.format(filename)
         send_whatsapp_doc.delay(to=to, link=link)
-        # return 'pdf generated'
-        return html
+        return 'pdf generated'
     else:
         return 'pdf not generated'
 
 
-@shared_task(name='Send whatsApp document')
+@shared_task(name='send WhatsApp document')
 def send_whatsapp_doc(to, link):
     headers = {"Authorization": settings.TOKEN}
     payload = {
@@ -99,7 +104,7 @@ def send_whatsapp_doc(to, link):
     return res.json()
 
 
-@shared_task(name='Send advert to cover letter subscribers')
+@shared_task(name='send advert to cover letter subscribers')
 def send_ad_to_cover_letter_sub(link: str):
     subscriber_service = SubscriberService()
     subscribers = subscriber_service.get_all()
