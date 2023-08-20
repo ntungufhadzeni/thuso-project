@@ -70,20 +70,17 @@ def generate_pdf(prompt, to):
 
     try:
         # config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
-        success = pdfkit.from_string(html_content, pdf_save_path, verbose=True, options=options)
+        pdfkit.from_string(html_content, pdf_save_path, verbose=True, options=options)
     except OSError:
         return "wkhtmltopdf not present in PATH"
 
-    if success:
-        link = 'https://' + settings.HOST + '/media/' + 'cover_letters/{}'.format(filename)
-        send_whatsapp_doc.apply_async(kwargs={"to": to, "link": link, "pdf_file_path": pdf_save_path}, countdown=5*60)
-        return 'pdf generated'
-    else:
-        return 'pdf not generated'
+    link = 'https://' + settings.HOST + '/media/' + 'cover_letters/{}'.format(filename)
+    send_whatsapp_doc.apply_async(kwargs={"to": to, "link": link}, countdown=5 * 60)
+    return 'pdf generated'
 
 
 @shared_task(name='send WhatsApp document')
-def send_whatsapp_doc(to, link, pdf_file_path):
+def send_whatsapp_doc(to, link):
     headers = {"Authorization": settings.TOKEN}
     payload = {
         "messaging_product": "whatsapp",
@@ -94,10 +91,12 @@ def send_whatsapp_doc(to, link, pdf_file_path):
             "link": link,
         }
     }
-    # Wait for pdf file to be ready
-    while not os.path.exists(pdf_file_path):
-        print("Waiting for pdf file to be ready")
+    # Check if file is pdf ready
+    result = requests.get(link)
+    while not result.status_code == 200:
+        print("File not ready")
         time.sleep(30)
+        result = requests.get(link)
 
     res = requests.post(settings.GRAPHQL_URL, headers=headers, json=payload)
     return res.json()
