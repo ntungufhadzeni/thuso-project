@@ -1,5 +1,4 @@
 import os
-import time
 
 import openai
 import pdfkit
@@ -22,15 +21,15 @@ def generate_prompt(from_id: str):
         Email address: {answers.email}, Job Details: {answers.job_title}, Company Name:{answers.company_name},
         Company Address: {answers.company_address}, Salutation: {answers.hiring_manager}, Introduction: {answers.introduction},
         Skills and Qualifications: {answers.skills_and_qualifications}, Achievements and Accomplishments: {answers.achievements},
-        Motivation: {answers.motivation}, Closing: {answers.closing}. Return answer as html_letters."""
+        Motivation: {answers.motivation}, Closing: {answers.closing}. Return answer as html."""
 
-    generate_html.delay(prompt=prompt, to=from_id)  # send cover letter via whatsapp
+    generate_pdf.delay(prompt=prompt, to=from_id)  # send cover letter via whatsapp
     answers_repo.delete(from_id)
     return 'success'
 
 
-@shared_task(name='generate html')
-def generate_html(prompt, to):
+@shared_task(name='generate pdf')
+def generate_pdf(prompt, to):
     response = openai.Completion.create(
         engine='text-davinci-003',
         prompt=prompt,
@@ -43,28 +42,8 @@ def generate_html(prompt, to):
         presence_penalty=0.0
     )
 
-    html = response.choices[0].text
-
-    # create html_letters
-    html_file_path = os.path.join(settings.BASE_DIR, 'cover_letter', 'html_letters', f'{to}.html')
-    os.makedirs(os.path.join(settings.BASE_DIR, 'cover_letter', 'html_letters'), exist_ok=True)
-    with open(html_file_path, 'w') as f:
-        f.write(html)
-        f.close()
-    generate_pdf.delay(to=to)
-    return "HTML created"
-
-
-@shared_task(name='generate pdf')
-def generate_pdf(to):
+    html_content = response.choices[0].text
     filename = f'{to}.pdf'
-    options = {
-        'page-size': 'A4',
-        'margin-top': '0.75in',
-        'margin-right': '0.75in',
-        'margin-bottom': '0.75in',
-        'margin-left': '0.75in',
-    }
 
     # Saving the File
     file_path = os.path.join(settings.MEDIA_ROOT, 'cover_letters')
@@ -73,10 +52,8 @@ def generate_pdf(to):
 
     # Save the PDF
     try:
-        html_file_path = os.path.join(settings.BASE_DIR, 'cover_letter', 'html_letters', f'{to}.html')
-        config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
-        success = pdfkit.from_file(html_file_path, pdf_save_path, configuration=config, options=options, verbose=True)
-        time.sleep(30)
+        # config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+        success = pdfkit.from_string(html_content, pdf_save_path, verbose=True)
     except OSError:
         return "wkhtmltopdf not present in PATH"
 

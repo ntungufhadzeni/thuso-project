@@ -8,20 +8,17 @@ ENV PYTHONUNBUFFERED 1
 
 
 # Set work directory
-WORKDIR /code
+WORKDIR /usr/src/app
 
 # Install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install wkhtmltopdf
-RUN apt-get update && apt-get install -y wkhtmltopdf xvfb
+RUN apt-get update && apt-get install -y wkhtmltopdf
 
 # Copy project
 COPY . .
-
-# Set permissions for the /app directory
-#RUN chmod -R 777 /code
 
 EXPOSE 8000
 

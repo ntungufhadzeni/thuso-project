@@ -6,11 +6,11 @@ services:
       context: .
       args:
         - BUILD_NO_CACHE=true
-    command: python /code/manage.py runserver 0.0.0.0:8000
+    command: python /usr/src/app/manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
     volumes:
-      - .:/code:rw
+      - .:/usr/src/app:rw
     env_file:
       - .env.dev
     depends_on:
@@ -30,7 +30,7 @@ services:
     build: .
     command: celery -A thuso worker -l info
     volumes:
-      - .:/code
+      - .:/usr/src/app
     env_file:
       - .env.dev
     depends_on:
@@ -40,7 +40,7 @@ services:
     build: .
     command: celery -A thuso beat -l info
     volumes:
-      - .:/code
+      - .:/usr/src/app
     env_file:
       - .env.dev
     depends_on:
@@ -50,7 +50,7 @@ services:
     image: mher/flower:0.9.7
     command: flower --broker=redis://redis:6379 --port=5555
     volumes:
-      - .:/code
+      - .:/usr/src/app
     env_file:
       - .env.dev
     ports:

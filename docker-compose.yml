@@ -6,10 +6,10 @@ services:
       context: .
       args:
         - BUILD_NO_CACHE=true
-    command: gunicorn --timeout 60 thuso.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn thuso.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - static-volume:/code/staticfiles:rw
-      - media-volume:/code/mediafiles:rw
+      - static-volume:/usr/src/app:rw
+      - media-volume:/usr/src/app:rw
     env_file:
       - .env
     depends_on:
@@ -19,8 +19,8 @@ services:
     build: ./nginx
     restart: unless-stopped
     volumes:
-      - static-volume:/code/staticfiles:rw
-      - media-volume:/code/mediafiles:rw
+      - static-volume:/home/staticfiles:rw
+      - media-volume:/home/mediafiles:rw
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
     ports:
@@ -43,7 +43,7 @@ services:
     build: .
     command: celery -A thuso worker -l info
     volumes:
-      - .:/code
+      - .:/usr/src/app
     env_file:
       - .env
     depends_on:
@@ -53,7 +53,7 @@ services:
     build: .
     command: celery -A thuso beat -l info
     volumes:
-      - .:/code
+      - .:/usr/src/app
     env_file:
       - .env
     depends_on:
@@ -63,7 +63,7 @@ services:
     image: mher/flower:0.9.7
     command: flower --broker=redis://redis:6379 --port=5555
     volumes:
-      - .:/code
+      - .:/usr/src/app
     env_file:
       - .env
     expose:
