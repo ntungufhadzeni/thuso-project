@@ -109,13 +109,13 @@ class CoverLetterAssistant:
             self.__send_whatsapp_message(
                 "😀 Great we have everything we need to create your "
                 "Cover Letter. We will send it to you when we are "
-                "done . . . . ")
+                "done. It will take 5-10 minutes . . . . ")
         else:
             generate_prompt.delay(from_id=self.from_id)
             self.__send_whatsapp_message(
                 "😀 Great we have everything we need to create your "
                 "Cover Letter. We will send it to you when we are "
-                "done . . . . ")
+                "done. It will take 5-10 minutes . . . . ")
 
     def handle_chat(self):
         answers = self.__answers_repo.get_by_id(self.from_id)

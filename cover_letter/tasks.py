@@ -1,4 +1,5 @@
 import os
+import time
 
 import openai
 import pdfkit
@@ -75,14 +76,14 @@ def generate_pdf(prompt, to):
 
     if success:
         link = 'https://' + settings.HOST + '/media/' + 'cover_letters/{}'.format(filename)
-        send_whatsapp_doc.apply_async(kwargs={"to": to, "link": link}, countdown=5*60)
+        send_whatsapp_doc.apply_async(kwargs={"to": to, "link": link, "pdf_file_path": pdf_save_path}, countdown=5*60)
         return 'pdf generated'
     else:
         return 'pdf not generated'
 
 
 @shared_task(name='send WhatsApp document')
-def send_whatsapp_doc(to, link):
+def send_whatsapp_doc(to, link, pdf_file_path):
     headers = {"Authorization": settings.TOKEN}
     payload = {
         "messaging_product": "whatsapp",
@@ -93,6 +94,11 @@ def send_whatsapp_doc(to, link):
             "link": link,
         }
     }
+    # Wait for pdf file to be ready
+    while not os.path.exists(pdf_file_path):
+        print("Waiting for pdf file to be ready")
+        time.sleep(30)
+
     res = requests.post(settings.GRAPHQL_URL, headers=headers, json=payload)
     return res.json()
 
