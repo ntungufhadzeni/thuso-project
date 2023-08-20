@@ -77,7 +77,8 @@ def generate_cover_letter(prompt, to):
     if success:
         link = 'https://' + settings.HOST + '/media/' + 'cover_letters/{}'.format(filename)
         send_whatsapp_doc.delay(to=to, link=link)
-        return 'pdf generated'
+        # return 'pdf generated'
+        return html
     else:
         return 'pdf not generated'
 
