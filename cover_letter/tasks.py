@@ -50,16 +50,32 @@ def generate_pdf(prompt, to):
     os.makedirs(file_path, exist_ok=True)
     pdf_save_path = os.path.join(file_path, filename)
 
+    try:
+        os.remove(pdf_save_path)
+        print(f"File '{pdf_save_path}' removed successfully.")
+    except FileNotFoundError:
+        print(f"File '{pdf_save_path}' does not exist.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
     # Save the PDF
+    options = {
+        'page-size': 'A4',
+        'margin-top': '0.75in',
+        'margin-right': '0.75in',
+        'margin-bottom': '0.75in',
+        'margin-left': '0.75in',
+    }
+
     try:
         # config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
-        success = pdfkit.from_string(html_content, pdf_save_path, verbose=True)
+        success = pdfkit.from_string(html_content, pdf_save_path, verbose=True, options=options)
     except OSError:
         return "wkhtmltopdf not present in PATH"
 
     if success:
         link = 'https://' + settings.HOST + '/media/' + 'cover_letters/{}'.format(filename)
-        send_whatsapp_doc.delay(to=to, link=link)
+        send_whatsapp_doc.apply_async(kwargs={"to": to, "link": link}, countdown=5*60)
         return 'pdf generated'
     else:
         return 'pdf not generated'
