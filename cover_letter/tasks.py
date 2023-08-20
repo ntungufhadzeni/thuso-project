@@ -48,12 +48,11 @@ def generate_cover_letter(prompt, to):
     filename = f'{to}.pdf'
 
     options = {
-        'encoding': 'UTF-8',
-        'enable-local-file-access': None,  # To be able to access CSS
         'page-size': 'A4',
-        'custom-header': [
-            ('Accept-Encoding', 'gzip')
-        ],
+        'margin-top': '0.75in',
+        'margin-right': '0.75in',
+        'margin-bottom': '0.75in',
+        'margin-left': '0.75in',
     }
 
     # Saving the File
