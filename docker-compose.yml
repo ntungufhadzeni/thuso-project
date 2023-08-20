@@ -8,8 +8,8 @@ services:
         - BUILD_NO_CACHE=true
     command: gunicorn thuso.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - static-volume:/usr/src/app:rw
-      - media-volume:/usr/src/app:rw
+      - static-volume:/usr/src/app/staticfiles:rw
+      - media-volume:/usr/src/app/mediafiles:rw
     env_file:
       - .env
     depends_on:
