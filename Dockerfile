@@ -2,13 +2,14 @@
 FROM python:3.10.2-slim-bullseye
 
 # Set environment variables
+ENV APP_HOME = /usr/src/app
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 
 # Set work directory
-WORKDIR /usr/src/app
+WORKDIR $APP_HOME
 
 # Install dependencies
 COPY requirements.txt .
@@ -21,4 +22,3 @@ RUN apt-get update && apt-get install -y wkhtmltopdf
 COPY . .
 
 EXPOSE 8000
-
