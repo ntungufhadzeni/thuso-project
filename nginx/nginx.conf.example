@@ -5,7 +5,7 @@ upstream web {
 server {
     listen 80;
     listen [::]:80;
-    server_name example.com www.example.co.za;  # Replace with your domain name or IP address
+    server_name example.com www.example.com flower.example.com;  # Replace with your domain name or IP address
 
     location ^~ /.well-known/acme-challenge/ {
     allow all;
@@ -15,7 +15,7 @@ server {
 
  server{
     listen 443 ssl;
-    server_name example.com www.example.co.za;
+    server_name example.com www.example.com;
 
     ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
@@ -28,16 +28,13 @@ server {
     }
 
     location /static/ {
-        alias /home/staticfiles/;
+        alias /usr/src/app/staticfiles/;
         autoindex on;
     }
 
     location /media/ {
-        alias /home/mediafiles/; # Replace with the correct path to your media files
+        alias /usr/src/app/mediafiles/; # Replace with the correct path to your media files
         autoindex on;
-        types {
-            application/pdf pdf;
-        }
     }
  }
 
