@@ -5,9 +5,9 @@ services:
     build: .
     command: gunicorn thuso.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - .:/usr/src/app:rw
-      - static-volume:/usr/src/app/static:rw
-      - media-volume:/usr/src/app/media:rw
+      - .:/home/app:rw
+      - static-volume:/home/app/static
+      - media-volume:/home/app/media
     env_file:
       - .env
     depends_on:
@@ -17,10 +17,10 @@ services:
     build: ./nginx
     restart: unless-stopped
     volumes:
-      - static-volume:/home/static:ro
-      - media-volume:/home/media:ro
-      - certbot-etc:/etc/letsencrypt:ro
-      - certbot-var:/var/lib/letsencrypt:ro
+      - static-volume:/home/app/static
+      - media-volume:/home/app/media
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
     ports:
       - "80:80"
       - "443:443"
@@ -41,7 +41,7 @@ services:
     build: .
     command: celery -A thuso worker -l info
     volumes:
-      - .:/usr/src/app
+      - .:/home/app
     env_file:
       - .env
     depends_on:
@@ -51,7 +51,7 @@ services:
     build: .
     command: celery -A thuso beat -l info
     volumes:
-      - .:/usr/src/app
+      - .:/home/app
     env_file:
       - .env
     depends_on:
@@ -61,7 +61,7 @@ services:
     image: mher/flower:0.9.7
     command: flower --broker=redis://redis:6379 --port=5555
     volumes:
-      - .:/usr/src/app
+      - .:/home/app
     env_file:
       - .env
     expose:
