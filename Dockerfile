@@ -8,6 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 RUN mkdir -p $APP_HOME
+RUN mkdir -p $APP_HOME/media
 
 # Set work directory
 WORKDIR $APP_HOME
@@ -27,6 +28,9 @@ COPY . .
 
 # chown all the files to the app user
 RUN chown -R app:app $APP_HOME
+
+# change permissions
+Run chmod -R 755 $APP_HOME/media
 
 # change to the app user
 USER app
