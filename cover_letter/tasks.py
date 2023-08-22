@@ -91,12 +91,6 @@ def send_whatsapp_doc(to, link):
             "link": link,
         }
     }
-    # Check if file is pdf ready
-    result = requests.get(link)
-    while not result.status_code == 200:
-        print("File not ready")
-        time.sleep(30)
-        result = requests.get(link)
 
     res = requests.post(settings.GRAPHQL_URL, headers=headers, json=payload)
     return res.json()

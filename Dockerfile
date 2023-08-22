@@ -8,7 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 RUN mkdir -p $APP_HOME
-RUN mkdir -p $APP_HOME/media
+RUN mkdir -p $APP_HOME/media/cover_letters
 
 # Set work directory
 WORKDIR $APP_HOME
