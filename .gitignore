@@ -85,11 +85,11 @@ __pycache__/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-mediafiles
+media
 
-# If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
+# If your build process includes running collectstatic, then you probably don't need or want to include static/
 # in your Git repositories. Update and uncomment the following line accordingly.
-# <django-project-name>/staticfiles/
+# <django-project-name>/static/
 
 ### Python template
 # Byte-compiled / optimized / DLL files
@@ -241,7 +241,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# pytype staticfiles type analyzer
+# pytype static type analyzer
 .pytype/
 
 # Cython debug symbols
@@ -253,6 +253,6 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/*
-staticfiles/admin/*
+static/admin/*
 */migrations/*
 */nginx.conf

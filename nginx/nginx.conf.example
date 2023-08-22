@@ -28,12 +28,12 @@ server {
     }
 
     location /static/ {
-        alias /home/staticfiles/;
+        alias /home/static/;
         autoindex on;
     }
 
     location /media/ {
-        alias /home/mediafiles/; # Replace with the correct path to your media files
+        alias /home/media/; # Replace with the correct path to your media files
         autoindex on;
     }
  }

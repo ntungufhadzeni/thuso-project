@@ -6,8 +6,8 @@ services:
     command: gunicorn thuso.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - .:/usr/src/app:rw
-      - static-volume:/usr/src/app/staticfiles/:rw
-      - media-volume:/usr/src/app/mediafiles/:rw
+      - static-volume:/usr/src/app/static:rw
+      - media-volume:/usr/src/app/media:rw
     env_file:
       - .env
     depends_on:
@@ -17,10 +17,10 @@ services:
     build: ./nginx
     restart: unless-stopped
     volumes:
-      - static-volume:/home/staticfiles/:rw
-      - media-volume:/home/mediafiles/:rw
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/lib/letsencrypt
+      - static-volume:/home/static:ro
+      - media-volume:/home/media:ro
+      - certbot-etc:/etc/letsencrypt:ro
+      - certbot-var:/var/lib/letsencrypt:ro
     ports:
       - "80:80"
       - "443:443"
