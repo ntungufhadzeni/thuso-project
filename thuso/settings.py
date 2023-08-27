@@ -135,6 +135,6 @@ CELERY_TIMEZONE = 'Africa/Johannesburg'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 # Bets settings
-X_RapidAPI_Key = os.getenv('X_RapidAPI_Key')
-X_RapidAPI_Host = os.getenv('X_RapidAPI_Host')
+X_RAPIDAPI_KEY = os.getenv('X_RAPIDAPI_KEY')
+X_RAPIDAPI_HOST = os.getenv('X_RAPIDAPI_HOST')
 API_URL = os.getenv('API_URL')

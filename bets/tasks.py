@@ -11,8 +11,8 @@ from .models import Match
 @shared_task(name='get_matches_from_api')
 def get_matches_api():
     headers = {
-        "X-RapidAPI-Key": settings.X_RapidAPI_Key,
-        "X-RapidAPI-Host": settings.X_RapidAPI_Host
+        "X-RapidAPI-Key": settings.X_RAPIDAPI_KEY,
+        "X-RapidAPI-Host": settings.X_RAPIDAPI_HOST
     }
     response = requests.get(settings.API_URL, headers=headers)
     if response.status_code == 200:
