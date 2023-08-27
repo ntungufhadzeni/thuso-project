@@ -37,3 +37,50 @@ p {
     font-size: 12px;
     margin-top: 20px;
 }
+
+h1 {
+    color: #333;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+select {
+    padding: 5px;
+}
+
+button {
+    padding: 5px 10px;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+.match-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.match-item strong {
+    display: inline-block;
+    width: 150px;
+    font-weight: bold;
+}
+
+h2 {
+    margin-top: 20px;
+    color: #444;
+}

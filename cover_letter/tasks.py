@@ -13,7 +13,7 @@ from cover_letter.services.subscriber_service import SubscriberService
 openai.api_key = settings.OPENAI_API_KEY
 
 
-@shared_task(name='generate prompt')
+@shared_task(name='generate_prompt')
 def generate_prompt(from_id: str):
     answers_repo = AnswerRepository()
     answers = answers_repo.get_by_id(from_id)[0]
@@ -29,7 +29,7 @@ def generate_prompt(from_id: str):
     return 'success'
 
 
-@shared_task(name='generate pdf')
+@shared_task(name='generate_pdf')
 def generate_pdf(prompt, to):
     response = openai.Completion.create(
         engine='text-davinci-003',
@@ -79,7 +79,7 @@ def generate_pdf(prompt, to):
     return 'pdf generated'
 
 
-@shared_task(name='send WhatsApp document')
+@shared_task(name='send_whatsapp_document')
 def send_whatsapp_doc(to, link):
     headers = {"Authorization": settings.TOKEN}
     payload = {
@@ -96,7 +96,7 @@ def send_whatsapp_doc(to, link):
     return res.json()
 
 
-@shared_task(name='send advert to cover letter subscribers')
+@shared_task(name='send_advert_to_cover_letter_subscribers')
 def send_ad_to_cover_letter_sub(link: str):
     subscriber_service = SubscriberService()
     subscribers = subscriber_service.get_all()
