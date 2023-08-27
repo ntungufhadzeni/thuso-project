@@ -15,8 +15,8 @@ class Match(models.Model):
     prob = models.CharField(max_length=2)
     home_team_form = models.CharField(max_length=10)
     away_team_form = models.CharField(max_length=10)
-    home_team_pos = models.CharField(max_length=11)
-    away_team_pos = models.CharField(max_length=11)
+    home_team_pos = models.CharField(max_length=50)
+    away_team_pos = models.CharField(max_length=50)
 
     @property
     def match_date(self):
