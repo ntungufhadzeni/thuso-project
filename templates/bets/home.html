@@ -1,13 +1,11 @@
 {% extends 'base.html' %}
 {% block title %} Football Betting {% endblock %}
 {% block content %}
-    <h1>Match List: {{ date }}</h1>
     {% if unique_countries %}
     <form method="post">
         {% csrf_token %}
         <label for="country_select">Select a country to filter by:</label>
         <select name="selected_country" id="country_select">
-            <option value="" {% if not selected_country %}selected{% endif %}>All</option>
             {% for country in unique_countries %}
                 <option value="{{ country }}" {% if country == selected_country %}selected{% endif %}>{{ country }}</option>
             {% endfor %}
@@ -15,22 +13,48 @@
         <button type="submit">Filter</button>
     </form>
 
-    <h2>Matches for {{ selected_country }}</h2>
+    <h2>{{ selected_country }}</h2>
     <ul>
-        {% for match in filtered_matches %}
-            <li>
-                <strong>League:</strong> {{ match.league }}<br>
-                <strong>Home Team:</strong> {{ match.home_team }}<br>
-                <strong>Away Team:</strong> {{ match.away_team }}<br>
-                <strong>Date:</strong> {{ match.match_date }}<br>
-                <strong>Time:</strong> {{ match.match_time }}<br>
-                <strong>Bet:</strong> {{ match.bet }}<br>
-                <strong>Probability:</strong> {{ match.prob }}<br>
-                <strong>Home Team Form:</strong> {{ match.home_team_form }}<br>
-                <strong>Away Team Form:</strong> {{ match.away_team_form }}<br>
-                <strong>Home Team Standing:</strong> {{ match.home_team_pos }} <br>
-                <strong>Away Team Standing:</strong> {{ match.away_team_pos }} <br>
-            </li>
+        {% for item in result_list %}
+            <caption>{{ item.league }}</caption>
+            <ul>
+                {% for match in item.matches %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><!-- Intentionally Blank --></th>
+                                <th>Home</th>
+                                <th>Away</th>
+                                <th><!-- Intentionally Blank --></th>
+                                <th>Info</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>Team</th>
+                                <td>{{ match.home_team }}</td>
+                                <td>{{ match.away_team }}</td>
+                                <th>Time</th>
+                                <td> {{ match.match_time }} </td>
+                            </tr>
+                            <tr>
+                                <th>Form</th>
+                                <td>{{ match.home_team_form }}</td>
+                                <td>{{ match.home_team_form }}</td>
+                                <th>Tip</th>
+                                <td>{{ match.bet }} </td>
+                            </tr>
+                            <tr>
+                                <th>Log</th>
+                                <td>{{ match.home_team_pos }}</td>
+                                <td>{{ match.away_team_pos }}</td>
+                                <th>Probability</th>
+                                <td>{{ match.prob }} </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                {% endfor %}
+            </ul>
         {% endfor %}
     </ul>
     {% else %}

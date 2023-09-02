@@ -19,9 +19,5 @@ class Match(models.Model):
     away_team_pos = models.CharField(max_length=50)
 
     @property
-    def match_date(self):
-        return self.time.strftime('%d/%m/%Y')
-
-    @property
     def match_time(self):
-        return f"{self.time.strftime('%H:%M')} (CAT)"
+        return f"{self.time.strftime('%B %d, %Y %I:%M %p')} (SAST)"

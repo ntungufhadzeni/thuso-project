@@ -1,7 +1,7 @@
 
 body {
     background-color: #f8f9fa;
-    font-family: Arial, sans-serif;
+    font-family: sans-serif;
 }
 .landing-container {
     max-width: 600px;
@@ -33,10 +33,6 @@ p {
 .whatsapp-link:hover {
     background-color: #128c7e;
 }
-.created-by {
-    font-size: 12px;
-    margin-top: 20px;
-}
 
 h1 {
     color: #333;
@@ -63,24 +59,71 @@ button {
     cursor: pointer;
 }
 
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-.match-item {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin: 10px 0;
-}
-
-.match-item strong {
-    display: inline-block;
-    width: 150px;
-    font-weight: bold;
-}
-
 h2 {
     margin-top: 20px;
     color: #444;
 }
+
+table {
+    border-collapse: collapse;
+    border: 1px solid black;
+    text-align: center;
+	vertical-align: middle;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 8px;
+}
+
+thead th {
+  width: 25%;
+}
+
+caption {
+  font-weight: bold;
+  font-size: 18px;
+  text-align: left;
+  color: #333;
+    margin-bottom: 16px;
+}
+
+thead {
+  background-color: #333;
+  color: white;
+    font-size: 0.875rem;
+	text-transform: uppercase;
+	letter-spacing: 2%;
+}
+
+tbody th {
+  background-color: #36c;
+  color: #fff;
+  text-align: left;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    border: 0;
+    height: 2.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* footer */
+.footerCol {
+    padding: 20px 0;
+    text-align: center;
+}
+
+.copyrightCol {
+    padding: 10px 0 10px;
+    font-size: 14px;
+}
+
+.copyrightCol p {
+    margin: 0;
+}
+
+
