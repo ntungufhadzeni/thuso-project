@@ -5,8 +5,7 @@ from .models import Match
 
 
 def match_list(request):
-    # date = datetime.datetime.now().date()
-    date = datetime.date(2023, 8, 26)
+    date = datetime.datetime.now().date()
     unique_countries = Match.objects.filter(time__gt=date).values_list('country', flat=True).distinct()
 
     filtered_matches = []
