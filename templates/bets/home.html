@@ -16,40 +16,28 @@
     <h2>{{ selected_country }}</h2>
     <ul>
         {% for item in result_list %}
-            <caption>{{ item.league }}</caption>
+            <caption>{{ item.competition }}</caption>
             <ul>
                 {% for match in item.matches %}
                     <table>
                         <thead>
                             <tr>
-                                <th><!-- Intentionally Blank --></th>
                                 <th>Home</th>
                                 <th>Away</th>
-                                <th><!-- Intentionally Blank --></th>
-                                <th>Info</th>
+                                <th>Time</th>
+                                <th>Prediction</th>
+                                <th>Status</th>
+                                <th>Result</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <th>Team</th>
                                 <td>{{ match.home_team }}</td>
                                 <td>{{ match.away_team }}</td>
-                                <th>Time</th>
-                                <td> {{ match.match_time }} </td>
-                            </tr>
-                            <tr>
-                                <th>Form</th>
-                                <td>{{ match.home_team_form }}</td>
-                                <td>{{ match.home_team_form }}</td>
-                                <th>Tip</th>
-                                <td>{{ match.bet }} </td>
-                            </tr>
-                            <tr>
-                                <th>Log</th>
-                                <td>{{ match.home_team_pos }}</td>
-                                <td>{{ match.away_team_pos }}</td>
-                                <th>Probability</th>
-                                <td>{{ match.prob }} </td>
+                                <td>{{ match.start_date|date:"F d, Y H:i" }}</td>
+                                <td>{{ match.prediction }}</td>
+                                <td>{{ match.status }}</td>
+                                <td>{{ match.result }}</td>
                             </tr>
                         </tbody>
                     </table>

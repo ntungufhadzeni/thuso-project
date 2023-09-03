@@ -6,7 +6,7 @@ from .models import Match
 
 def match_list(request):
     date = datetime.datetime.now().date()
-    unique_countries = Match.objects.filter(time__gt=date).values_list('country', flat=True).distinct()
+    unique_countries = Match.objects.filter(start_date__gt=date).values_list('country', flat=True).distinct()
 
     filtered_matches = []
     selected_country = []
@@ -15,10 +15,10 @@ def match_list(request):
     if request.method == 'POST':
         selected_country = request.POST.get('selected_country')
         if selected_country:
-            filtered_matches = Match.objects.filter(time__gt=date, country=selected_country)
+            filtered_matches = Match.objects.filter(start_date__gt=date, country=selected_country)
     elif unique_countries:
         selected_country = unique_countries[0]  # Default selection
-        filtered_matches = Match.objects.filter(time__gt=date, country=selected_country)
+        filtered_matches = Match.objects.filter(start_date__gt=date, country=selected_country)
 
     if filtered_matches:
         # Create a defaultdict to store matches by league
@@ -26,20 +26,17 @@ def match_list(request):
 
         # Group matches by the 'league' field
         for match in filtered_matches:
-            matches_by_league[match.league].append({
+            matches_by_league[match.competition].append({
                 'home_team': match.home_team,
                 'away_team': match.away_team,
-                'match_time': match.match_time,
-                'bet': match.bet,
-                'prob': match.prob,
-                'home_team_form': match.home_team_form,
-                'away_team_form': match.away_team_form,
-                'home_team_pos': match.home_team_pos,
-                'away_team_pos': match.away_team_pos,
+                'start_date': match.start_date,
+                'prediction': match.prediction,
+                'result': match.result,
+                'status': match.status,
             })
 
         # Convert the defaultdict to a list of dictionaries
-        result_list = [{'league': league, 'matches': matches} for league, matches in matches_by_league.items()]
+        result_list = [{'competition': league, 'matches': matches} for league, matches in matches_by_league.items()]
 
     context = {
         'unique_countries': unique_countries,
