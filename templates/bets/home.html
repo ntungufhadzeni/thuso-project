@@ -24,21 +24,19 @@
     </form>
 
     <h2>{{ selected_country }}</h2>
-    <ul>
         {% for item in result_list %}
             <caption>{{ item.competition }}</caption>
-            <ul>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Home</th>
-                            <th>Away</th>
-                            <th>Time</th>
-                            <th>Prediction</th>
-                            <th>Status</th>
-                            <th>Result</th>
-                        </tr>
-                    </thead>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Home</th>
+                        <th>Away</th>
+                        <th>Time</th>
+                        <th>Prediction</th>
+                        <th>Status</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
                 {% for match in item.matches %}
                     <tbody>
                         <tr>
@@ -52,9 +50,7 @@
                     </tbody>
                 {% endfor %}
                 </table>
-            </ul>
         {% endfor %}
-    </ul>
     {% else %}
         <h2>No data</h2>
     {% endif %}
