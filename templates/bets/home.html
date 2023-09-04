@@ -44,7 +44,7 @@
                             <td>{{ match.away_team }}</td>
                             <td>{{ match.start_date|date:"F d, Y H:i" }}</td>
                             <td>{{ match.prediction }}</td>
-                            <td style="color: {% if match.status == 'won' %}green{% elif match.status == 'loss' %}red{% endif %};">{{ match.status.title() }}</td>
+                            <td style="color: {% if match.status == 'won' %}green{% elif match.status == 'loss' %}red{% endif %};">{{ match.status.title }}</td>
                             <td>{{ match.result }}</td>
                         </tr>
                     </tbody>
