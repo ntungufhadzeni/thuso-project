@@ -20,7 +20,7 @@ def get_matches_api():
         data = response.json()['data']
         if data:
             for entry in data:
-                start_date = entry['start_date'] + '+00:00'
+                start_date = entry['start_date'] + '+01:00'
                 match = Match(
                     id=entry['id'],
                     country=entry['competition_cluster'],
