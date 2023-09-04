@@ -6,7 +6,7 @@ from .models import Match
 
 def match_list(request):
     date = datetime.datetime.now().date()
-    unique_countries = Match.objects.filter(start_date__gt=date).values_list('country', flat=True).distinct()
+    unique_countries = Match.objects.filter(start_date__date=date).values_list('country', flat=True).distinct()
 
     filtered_matches = []
     selected_country = []
@@ -14,11 +14,13 @@ def match_list(request):
 
     if request.method == 'POST':
         selected_country = request.POST.get('selected_country')
+        picked_date = request.POST.get('selected_date')
+        date = datetime.datetime.strptime(picked_date, '%Y-%m-%d').date()
         if selected_country:
-            filtered_matches = Match.objects.filter(start_date__gt=date, country=selected_country)
+            filtered_matches = Match.objects.filter(start_date__date=date, country=selected_country)
     elif unique_countries:
         selected_country = unique_countries[0]  # Default selection
-        filtered_matches = Match.objects.filter(start_date__gt=date, country=selected_country)
+        filtered_matches = Match.objects.filter(start_date__date=date, country=selected_country)
 
     if filtered_matches:
         # Create a defaultdict to store matches by league

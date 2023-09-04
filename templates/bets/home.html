@@ -4,13 +4,23 @@
     {% if unique_countries %}
     <form method="post">
         {% csrf_token %}
-        <label for="country_select">Select a country to filter by:</label>
-        <select name="selected_country" id="country_select">
-            {% for country in unique_countries %}
-                <option value="{{ country }}" {% if country == selected_country %}selected{% endif %}>{{ country }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit">Filter</button>
+        <div style="display: flex; align-items: center;">
+            <div style="margin-right: 20px;">
+                <label for="country_select">Select a country:</label>
+                <select name="selected_country" id="country_select">
+                    {% for country in unique_countries %}
+                        <option value="{{ country }}" {% if country == selected_country %}selected{% endif %}>{{ country }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="margin-right: 20px;">
+                <label for="datepicker">Select a date:</label>
+                <input type="date" id="datepicker" name="selected_date" value="{{ date|date:'Y-m-d' }}" required>
+            </div>
+            <div style="margin-right: 20px;">
+                <button type="submit">Filter</button>
+            </div>
+        </div>
     </form>
 
     <h2>{{ selected_country }}</h2>
@@ -18,30 +28,30 @@
         {% for item in result_list %}
             <caption>{{ item.competition }}</caption>
             <ul>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Home</th>
+                            <th>Away</th>
+                            <th>Time</th>
+                            <th>Prediction</th>
+                            <th>Status</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
                 {% for match in item.matches %}
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Home</th>
-                                <th>Away</th>
-                                <th>Time</th>
-                                <th>Prediction</th>
-                                <th>Status</th>
-                                <th>Result</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>{{ match.home_team }}</td>
-                                <td>{{ match.away_team }}</td>
-                                <td>{{ match.start_date|date:"F d, Y H:i" }}</td>
-                                <td>{{ match.prediction }}</td>
-                                <td>{{ match.status }}</td>
-                                <td>{{ match.result }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <tbody>
+                        <tr>
+                            <td>{{ match.home_team }}</td>
+                            <td>{{ match.away_team }}</td>
+                            <td>{{ match.start_date|date:"F d, Y H:i" }}</td>
+                            <td>{{ match.prediction }}</td>
+                            <td>{{ match.status }}</td>
+                            <td>{{ match.result }}</td>
+                        </tr>
+                    </tbody>
                 {% endfor %}
+                </table>
             </ul>
         {% endfor %}
     </ul>
