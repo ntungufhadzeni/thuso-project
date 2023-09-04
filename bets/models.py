@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils import timezone
-import uuid
 
 
 class Match(models.Model):
@@ -26,18 +25,16 @@ class Match(models.Model):
     @property
     def prediction(self):
         if self.bet == '1':
-            return 'Home team win'
+            return self.home_team
         elif self.bet == 'X':
-            return 'Draw'
+            return 'X'
         elif self.bet == '2':
-            return 'Away team win'
+            return self.away_team
         elif self.bet == '1X':
-            return 'Home team or draw'
+            return f'{self.home_team} or X'
         elif self.bet == 'X2':
-            return 'Away team or draw'
+            return f'X or {self.away_team}'
         elif self.bet == '12':
-            return 'Home team or away team'
+            return f'{self.home_team} or {self.away_team}'
         else:
             return self.bet
-
-
