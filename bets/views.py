@@ -6,7 +6,8 @@ from .models import Match
 
 def match_list(request):
     date = datetime.datetime.now().date()
-    unique_countries = Match.objects.filter(start_date__date=date).values_list('country', flat=True).distinct()
+    unique_countries = Match.objects.filter(start_date__date=date)\
+        .order_by('country').values_list('country', flat=True).distinct()
 
     filtered_matches = []
     selected_country = []

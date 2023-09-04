@@ -17,6 +17,7 @@ class Match(models.Model):
     last_update_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        verbose_name_plural = 'Matches'
         ordering = ("-created_at",)
 
     def __str__(self):
