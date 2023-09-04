@@ -20,8 +20,7 @@ def get_matches_api():
         data = response.json()['data']
         if data:
             for entry in data:
-                start_date = datetime.datetime.strptime(entry['start_date'], '%Y-%m-%dT%H:%M:%S') + datetime.timedelta(
-                    hours=1)
+                start_date = entry['start_date'] + '+00:00'
                 match = Match(
                     id=entry['id'],
                     country=entry['competition_cluster'],

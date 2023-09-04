@@ -5,7 +5,7 @@ import uuid
 
 class Match(models.Model):
     id = models.IntegerField(editable=False, primary_key=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     country = models.CharField(max_length=50)
     federation = models.CharField(max_length=50)
     competition = models.CharField(max_length=50)
@@ -16,6 +16,12 @@ class Match(models.Model):
     result = models.CharField(max_length=10)
     start_date = models.DateTimeField()
     last_update_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.home_team} vs. {self.away_team} ({self.start_date.strftime('%B %d, %Y %H:%M')})"
 
     @property
     def prediction(self):
