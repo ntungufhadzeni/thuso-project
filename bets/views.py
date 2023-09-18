@@ -19,6 +19,8 @@ def match_list(request):
         date = datetime.datetime.strptime(picked_date, '%Y-%m-%d').date()
         if selected_country:
             filtered_matches = Match.objects.filter(start_date__date=date, country=selected_country)
+            unique_countries = Match.objects.filter(start_date__date=date) \
+                .order_by('country').values_list('country', flat=True).distinct()
     elif unique_countries:
         selected_country = unique_countries[0]  # Default selection
         filtered_matches = Match.objects.filter(start_date__date=date, country=selected_country)
