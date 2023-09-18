@@ -6,7 +6,7 @@
         {% csrf_token %}
         <div style="display: flex; align-items: center;">
             <div style="margin-right: 20px;">
-                <label for="country_select">Select a country:</label>
+                <label for="country_select">Country:</label>
                 <select name="selected_country" id="country_select">
                     {% for country in unique_countries %}
                         <option value="{{ country }}" {% if country == selected_country %}selected{% endif %}>{{ country }}</option>
@@ -14,7 +14,7 @@
                 </select>
             </div>
             <div style="margin-right: 20px;">
-                <label for="datepicker">Select a date:</label>
+                <label for="datepicker">Date:</label>
                 <input type="date" id="datepicker" name="selected_date" value="{{ date|date:'Y-m-d' }}" required>
             </div>
             <div style="margin-right: 20px;">
