@@ -4,15 +4,27 @@ services:
   web:
     build: .
     command: python /home/app/manage.py runserver 0.0.0.0:8000 --insecure
-    ports:
-      - "8000:8000"
     volumes:
       - .:/home/app
+      - static-volume:/home/app/static
+      - media-volume:/home/app/media
     env_file:
       - .env.dev
     depends_on:
       - db
       - redis
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    volumes:
+      - static-volume:/home/app/static
+      - media-volume:/home/app/media
+    ports:
+      - "80:80"
+    depends_on:
+      - web
   db:
     image: postgres:13
     volumes:
@@ -43,17 +55,8 @@ services:
     depends_on:
       - redis
       - db
-  flower:
-    image: mher/flower:0.9.7
-    command: flower --broker=redis://redis:6379 --port=5555
-    volumes:
-      - .:/home/app
-    env_file:
-      - .env.dev
-    ports:
-      - "5555:5555"
-    depends_on:
-      - redis
 
 volumes:
   postgres_data:
+  media-volume:
+  static-volume:
