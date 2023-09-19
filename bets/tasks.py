@@ -10,7 +10,7 @@ from .models import Match
 @shared_task(name='get_matches_from_api')
 def get_matches_api():
     date = datetime.datetime.now().strftime('%Y-%m-%d')
-    params = {"market": "classic", "iso_date": date, "federation": "UEFA"}
+    params = {"market": "classic", "iso_date": date}
     headers = {
         "X-RapidAPI-Key": settings.X_RAPIDAPI_KEY,
         "X-RapidAPI-Host": settings.X_RAPIDAPI_HOST
@@ -42,7 +42,7 @@ def get_matches_api():
 @shared_task(name='update_matches_results_from_api')
 def update_matches_results():
     date = datetime.datetime.now().strftime('%Y-%m-%d')
-    params = {"market": "classic", "iso_date": date, "federation": "UEFA"}
+    params = {"market": "classic", "iso_date": date}
     headers = {
         "X-RapidAPI-Key": settings.X_RAPIDAPI_KEY,
         "X-RapidAPI-Host": settings.X_RAPIDAPI_HOST
