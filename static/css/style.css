@@ -85,7 +85,7 @@ label {
     font-weight: bold;
 }
 
-select, input[type="date"], button {
+select, input[type="date"] {
     padding: 5px;
     margin-right: 10px;
     border: 1px solid #ccc;
