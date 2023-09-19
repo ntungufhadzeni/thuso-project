@@ -67,6 +67,10 @@ h2 {
     color: #444;
 }
 
+.filter {
+    margin-top: 10px;
+}
+
 
 /* Reset some default styles */
 body, h1, h2, h3, p, ul, li {
@@ -85,7 +89,7 @@ label {
     font-weight: bold;
 }
 
-select, input[type="date"] {
+select, input[type="date"], button {
     padding: 5px;
     margin-right: 10px;
     border: 1px solid #ccc;
@@ -96,7 +100,6 @@ button {
     background-color: #007bff;
     color: #fff;
     cursor: pointer;
-    padding: 5px;
 }
 
 button:hover {
