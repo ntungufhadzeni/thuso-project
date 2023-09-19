@@ -115,7 +115,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # facebook credentials
-TOKEN = 'Bearer ' + os.getenv('TOKEN')
+TOKEN = 'Bearer ' + os.getenv('TOKEN', '')
 GRAPHQL_URL = os.getenv('URL')
 VERIFY_TOKEN = os.getenv('VERIFY_TOKEN')
 
