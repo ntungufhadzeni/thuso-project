@@ -3,7 +3,7 @@ version: "3.9"
 services:
   web:
     build: .
-    command: gunicorn thuso.wsgi:application --bind 0.0.0.0:8000
+    command: sh -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn thuso.wsgi:application -w 4 -k uvicorn.workers.UvicornWorker"
     volumes:
       - .:/home/app:rw
       - static-volume:/home/app/static
