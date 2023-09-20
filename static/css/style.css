@@ -6,6 +6,14 @@ body {
     padding: 20px;
 }
 
+body, wrapper {
+   min-height:100vh;
+}
+
+.flex-fill {
+   flex:1 1 auto;
+}
+
 .landing-container {
     max-width: 600px;
     margin: 0 auto;

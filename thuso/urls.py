@@ -21,8 +21,8 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('cover_letter.urls')),
-    path('football-betting', include('bets.urls'))
+    path('cover-letter', include('cover_letter.urls')),
+    path('', include('bets.urls'))
 ]
 
 if settings.DEBUG:
