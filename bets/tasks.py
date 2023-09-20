@@ -81,6 +81,7 @@ def get_matches_api():
 def update_matches_results():
     utc = arrow.utcnow()
     local = utc.to('Africa/Johannesburg')
+    local = local.shift(days=-1)
     date = local.format('YYYY-MM-DD')
 
     params = {"market": "classic", "iso_date": date}
