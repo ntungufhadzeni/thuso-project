@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% block title %} Football Betting {% endblock %}
 {% block content %}
-{% if unique_countries %}
 <form method="post">
     {% csrf_token %}
     <div style="display: flex; align-items: center;">
+        {% if unique_countries %}
         <div>
             <label for="country_select">Country:</label>
             <select name="selected_country" id="country_select">
@@ -15,6 +15,7 @@
                 {% endfor %}
             </select>
         </div>
+        {% endif %}
         <div>
             <label for="datepicker">Date:</label>
             <input type="date" id="datepicker" name="selected_date" value="{{ date|date:'Y-m-d' }}" required>
@@ -24,32 +25,32 @@
          <button type="submit">Filter</button>
      </div>
 </form>
-
-<h2>{{ selected_country }}</h2>
-{% if result_list %}
-{% for item in result_list %}
-<h3>{{ item.competition }}</h3>
-<div class="match-cards">
-    {% for match in item.matches %}
-    <div class="match-card">
-        <div class="match-info">
-            <p class="team">{{ match.home_team }} vs {{ match.away_team }}</p>
-            <p class="time">{{ match.start_date|date:"F d, Y H:i" }}</p>
-            <p class="prediction">Tip: {{ match.prediction }}</p>
-            <p class="status"
-               style="color: {% if match.status == 'won' %}green{% elif match.status == 'lost' %}red{% endif %};">
-                {{ match.status.title }}
-            </p>
-            <p class="result">{{ match.result }}</p>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-{% endfor %}
+{% if unique_countries %}
+    <h2>{{ selected_country }}</h2>
+    {% if result_list %}
+        {% for item in result_list %}
+            <h3>{{ item.competition }}</h3>
+            <div class="match-cards">
+            {% for match in item.matches %}
+                <div class="match-card">
+                    <div class="match-info">
+                        <p class="team">{{ match.home_team }} vs {{ match.away_team }}</p>
+                        <p class="time">{{ match.start_date|date:"F d, Y H:i" }}</p>
+                        <p class="prediction">Tip: {{ match.prediction }}</p>
+                        <p class="status"
+                            style="color: {% if match.status == 'won' %}green{% elif match.status == 'lost' %}red{% endif %};">
+                            {{ match.status.title }}
+                        </p>
+                        <p class="result">{{ match.result }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="no-matches">No matches found for the selected criteria.</p>
+    {% endif %}
 {% else %}
-<p>No data</p>
-{% endif %}
-{% else %}
-<p>No data</p>
+    <p class="no-data">No data available.</p>
 {% endif %}
 {% endblock %}

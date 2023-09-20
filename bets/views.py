@@ -17,10 +17,16 @@ def match_list(request):
         selected_country = request.POST.get('selected_country')
         picked_date = request.POST.get('selected_date')
         date = datetime.datetime.strptime(picked_date, '%Y-%m-%d').date()
+        unique_countries = Match.objects.filter(start_date__date=date) \
+            .order_by('country').values_list('country', flat=True).distinct()
         if selected_country:
             filtered_matches = Match.objects.filter(start_date__date=date, country=selected_country)
-            unique_countries = Match.objects.filter(start_date__date=date) \
-                .order_by('country').values_list('country', flat=True).distinct()
+            if not filtered_matches and unique_countries:
+                selected_country = unique_countries[0]  # Default selection
+                filtered_matches = Match.objects.filter(start_date__date=date, country=selected_country)
+        elif unique_countries:
+            selected_country = unique_countries[0]  # Default selection
+            filtered_matches = Match.objects.filter(start_date__date=date, country=selected_country)
     elif unique_countries:
         selected_country = unique_countries[0]  # Default selection
         filtered_matches = Match.objects.filter(start_date__date=date, country=selected_country)
