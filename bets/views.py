@@ -1,59 +1,58 @@
 import datetime
 from collections import defaultdict
+from django.http import HttpResponse
 from django.shortcuts import render
+from django.template.loader import render_to_string
+
 from .models import Match
 
 
+def index(request):
+    if request.method == "GET":
+        date = datetime.datetime.now().date()
+        unique_countries = Match.objects.order_by('country').values_list('country', flat=True).distinct()
+        context = {
+            'unique_countries': unique_countries,
+            'date': date
+        }
+        return render(request, 'bets/home.html', context)
+
+
 def match_list(request):
-    date = datetime.datetime.now().date()
-    unique_countries = Match.objects.filter(start_date__date=date)\
-        .order_by('country').values_list('country', flat=True).distinct()
-
-    filtered_matches = []
-    selected_country = []
-    result_list = []
-
-    if request.method == 'POST':
-        selected_country = request.POST.get('selected_country')
-        picked_date = request.POST.get('selected_date')
+    if request.method == 'GET':
+        selected_country = request.GET.get('country')
+        picked_date = request.GET.get('date')
         date = datetime.datetime.strptime(picked_date, '%Y-%m-%d').date()
-        unique_countries = Match.objects.filter(start_date__date=date) \
-            .order_by('country').values_list('country', flat=True).distinct()
-        if selected_country:
-            filtered_matches = Match.objects.filter(start_date__date=date, country=selected_country)
-            if not filtered_matches and unique_countries:
-                selected_country = unique_countries[0]  # Default selection
-                filtered_matches = Match.objects.filter(start_date__date=date, country=selected_country)
-        elif unique_countries:
-            selected_country = unique_countries[0]  # Default selection
-            filtered_matches = Match.objects.filter(start_date__date=date, country=selected_country)
-    elif unique_countries:
-        selected_country = unique_countries[0]  # Default selection
+        result_list = []
+
         filtered_matches = Match.objects.filter(start_date__date=date, country=selected_country)
 
-    if filtered_matches:
-        # Create a defaultdict to store matches by league
-        matches_by_league = defaultdict(list)
+        if filtered_matches:
+            # Create a defaultdict to store matches by league
+            matches_by_league = defaultdict(list)
 
-        # Group matches by the 'league' field
-        for match in filtered_matches:
-            matches_by_league[match.competition].append({
-                'home_team': match.home_team,
-                'away_team': match.away_team,
-                'start_date': match.start_date,
-                'prediction': match.prediction,
-                'result': match.result,
-                'status': match.status,
-            })
+            # Group matches by the 'league' field
+            for match in filtered_matches:
+                matches_by_league[match.competition].append({
+                    'home_team': match.home_team,
+                    'away_team': match.away_team,
+                    'start_date': match.start_date,
+                    'prediction': match.prediction,
+                    'result': match.result,
+                    'status': match.status,
+                })
 
-        # Convert the defaultdict to a list of dictionaries
-        result_list = [{'competition': league, 'matches': matches} for league, matches in matches_by_league.items()]
+            # Convert the defaultdict to a list of dictionaries
+            result_list = [{'competition': league, 'matches': matches} for league, matches in matches_by_league.items()]
 
-    context = {
-        'unique_countries': unique_countries,
-        'selected_country': selected_country,
-        'result_list': result_list,
-        'date': date
-    }
+        context = {
+            'result_list': result_list,
+            'selected_country': selected_country,
+        }
+        html_response = render_to_string('bets/matches.html', context)
 
-    return render(request, 'bets/home.html', context)
+        # Return the HTML content as a string in the JsonResponse
+        return HttpResponse(html_response)
+
+
+

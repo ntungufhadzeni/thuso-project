@@ -1,0 +1,26 @@
+<h2>{{ selected_country }}</h2>
+{% if result_list %}
+    {% for item in result_list %}
+        <h3>{{ item.competition }}</h3>
+        <div class="match-cards">
+            {% for match in item.matches %}
+                <div class="match-card">
+                    <div class="match-info">
+                        <p class="team">{{ match.home_team }} vs {{ match.away_team }}</p>
+                        <p class="time">{{ match.start_date|date:"F d, Y H:i" }}</p>
+                        <p class="prediction">Tip: {{ match.prediction }}</p>
+                        <p class="status"
+                            style="color: {% if match.status == 'won' %}green{% elif match.status == 'lost' %}red{% endif %};">
+                            {{ match.status.title }}
+                        </p>
+                        <p class="result">{{ match.result }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% else %}
+    <div>
+        <p class="no-matches">No matches found for the selected criteria.</p>
+    </div>
+{% endif %}
