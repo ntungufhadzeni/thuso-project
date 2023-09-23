@@ -5,7 +5,6 @@ services:
     build: .
     command: sh -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn thuso.wsgi:application --bind 0.0.0.0:8000"
     volumes:
-      - .:/home/app:rw
       - static-volume:/home/app/static
       - media-volume:/home/app/media
     env_file:
@@ -40,8 +39,6 @@ services:
   celery:
     build: .
     command: celery -A thuso worker -l info
-    volumes:
-      - .:/home/app
     env_file:
       - .env
     depends_on:
@@ -50,8 +47,6 @@ services:
   celery-beat:
     build: .
     command: celery -A thuso beat -l info
-    volumes:
-      - .:/home/app
     env_file:
       - .env
     depends_on:
@@ -60,8 +55,6 @@ services:
   flower:
     image: mher/flower:0.9.7
     command: flower --broker=redis://redis:6379 --port=5555
-    volumes:
-      - .:/home/app
     env_file:
       - .env
     expose:
