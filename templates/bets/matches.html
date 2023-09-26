@@ -1,3 +1,4 @@
+{% load custom_tags %}
 <h2>{{ selected_country }}</h2>
 {% if result_list %}
     {% for item in result_list %}
@@ -9,6 +10,24 @@
                         <p class="team">{{ match.home_team }} vs {{ match.away_team }}</p>
                         <p class="time">{{ match.start_date|date:"F d, Y H:i" }}</p>
                         <p class="prediction">Tip: {{ match.prediction }}</p>
+                        {% if match.odds %}
+                            <table class="center">
+                                <tr>
+                                {% for key in match.odds.keys %}
+                                    <td class="odds" style="color: {% if key == match.bet %}red{% endif %};">
+                                        {{ key }}
+                                    </td>
+                                {% endfor %}
+                                </tr>
+                                <tr>
+                                {% for value in match.odds.values %}
+                                    <td class="odds" style="color: {% if value == match.odds|check_odds:match.bet %}red{% endif %};">
+                                        {{ value }}
+                                    </td>
+                                {% endfor %}
+                                </tr>
+                            </table>
+                        {% endif %}
                         <p class="status"
                             style="color: {% if match.status == 'won' %}green{% elif match.status == 'lost' %}red{% endif %};">
                             {{ match.status.title }}

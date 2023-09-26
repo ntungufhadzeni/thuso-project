@@ -10,6 +10,7 @@ class Match(models.Model):
     home_team = models.CharField(max_length=50)
     away_team = models.CharField(max_length=50)
     bet = models.CharField(max_length=100)
+    odds = models.JSONField(null=True, blank=True)
     status = models.CharField(max_length=20)
     result = models.CharField(max_length=10)
     start_date = models.DateTimeField()
@@ -38,3 +39,6 @@ class Match(models.Model):
             return f'{self.home_team} or {self.away_team}'
         else:
             return self.bet
+
+
+

@@ -40,6 +40,8 @@ def match_list(request):
                     'prediction': match.prediction,
                     'result': match.result,
                     'status': match.status,
+                    'odds': match.odds,
+                    'bet': match.bet,
                 })
 
             # Convert the defaultdict to a list of dictionaries

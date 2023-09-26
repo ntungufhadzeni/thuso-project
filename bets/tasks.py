@@ -33,6 +33,7 @@ def get_matches_api_next_day():
                     away_team=entry['away_team'],
                     start_date=start_date,
                     bet=entry['prediction'],
+                    odds=entry['odds'],
                     result=entry['result'],
                     status=entry['status']
                 )
@@ -68,6 +69,7 @@ def get_matches_api():
                     away_team=entry['away_team'],
                     start_date=start_date,
                     bet=entry['prediction'],
+                    odds=entry['odds'],
                     result=entry['result'],
                     status=entry['status']
                 )
