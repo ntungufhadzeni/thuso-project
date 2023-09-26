@@ -22,6 +22,7 @@
         </div>
     </div>
 </form>
+<h2 id="country"></h2>
 <div id="matches"></div>
 {% endblock %}
 {% block custom_js %}
@@ -35,12 +36,22 @@ $(document).ready(function () {
         const country = $('#country_select').val();
         const date = $('#datepicker').val();
 
+        const loadingAnimation = `<div class="animation-container">
+                                    <div class="dash uno"></div>
+                                    <div class="dash dos"></div>
+                                    <div class="dash tres"></div>
+                                    <div class="dash cuatro"></div>
+                                    </div>`
+
+        $('#country').html(country)
+
+        $("#matches").html(loadingAnimation)
+
         $.ajax({
             url: "{% url 'matches' %}",
             method: "GET",
             data: {
                 country: country,
-                csrfmiddlewaretoken: '{{ csrf_token }}',
                 date: date
             },
             success: function (data) {
