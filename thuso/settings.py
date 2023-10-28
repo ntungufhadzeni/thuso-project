@@ -14,7 +14,7 @@ HOST = os.getenv('HOST', '')
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split(' ')
 
-CSRF_TRUSTED_ORIGINS = ['https://*.' + HOST, ]
+# CSRF_TRUSTED_ORIGINS = ['https://*.' + HOST, ]
 
 # Base url to serve media files
 MEDIA_URL = '/media/'
@@ -31,7 +31,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'cover_letter',
-    'bets',
     'django_celery_beat',
     'django_celery_results',
 ]
@@ -134,7 +133,3 @@ CELERY_TIMEZONE = 'Africa/Johannesburg'
 # BEAT SETTINGS
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
-# Bets settings
-X_RAPIDAPI_KEY = os.getenv('X_RAPIDAPI_KEY')
-X_RAPIDAPI_HOST = os.getenv('X_RAPIDAPI_HOST')
-API_URL = os.getenv('API_URL')

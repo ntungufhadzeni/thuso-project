@@ -25,7 +25,6 @@ services:
       - "443:443"
     depends_on:
       - web
-      - flower
   db:
     image: postgres:13
     volumes:
@@ -52,15 +51,6 @@ services:
     depends_on:
       - redis
       - db
-  flower:
-    image: mher/flower:0.9.7
-    command: flower --broker=redis://redis:6379 --port=5555
-    env_file:
-      - .env
-    expose:
-      - 5555
-    depends_on:
-      - redis
 
 volumes:
   postgres_data:

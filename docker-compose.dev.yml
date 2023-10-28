@@ -28,7 +28,7 @@ services:
   db:
     image: postgres:13
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - postgres-data:/var/lib/postgresql/data/
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
@@ -57,6 +57,6 @@ services:
       - db
 
 volumes:
-  postgres_data:
+  postgres-data:
   media-volume:
   static-volume:
