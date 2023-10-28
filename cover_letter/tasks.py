@@ -1,5 +1,4 @@
 import os
-import time
 
 import openai
 import pdfkit
@@ -7,32 +6,34 @@ import requests
 from celery import shared_task
 from django.conf import settings
 
-from cover_letter.repositories.answer_repository import AnswerRepository
+from cover_letter.repositories.answer_redis_repository import AnswerRedisRepository
+from cover_letter.repositories.subscriber_sql_repository import SubscriberSQLRepository
 from cover_letter.services.subscriber_service import SubscriberService
 
 openai.api_key = settings.OPENAI_API_KEY
 
 
 @shared_task(name='generate_prompt')
-def generate_prompt(from_id: str):
-    answers_repo = AnswerRepository()
-    answers = answers_repo.get_by_id(from_id)[0]
+def generate_prompt(sender_id: str):
+    repo = AnswerRedisRepository()
+    answers = repo.get_by_id(sender_id)[0]
     prompt = f"""Write a cover letter for me. Here is my details:
         Full Name: {answers.full_name}, Address: {answers.address}, Phone: {answers.phone_number},
         Email address: {answers.email}, Job Details: {answers.job_title}, Company Name:{answers.company_name},
-        Company Address: {answers.company_address}, Salutation: {answers.hiring_manager}, Introduction: {answers.introduction},
-        Skills and Qualifications: {answers.skills_and_qualifications}, Achievements and Accomplishments: {answers.achievements},
-        Motivation: {answers.motivation}, Closing: {answers.closing}. Return answer as html."""
+        Company Address: {answers.company_address}, Salutation: {answers.hiring_manager}, 
+        Introduction: {answers.introduction}, Skills and Qualifications: {answers.skills_and_qualifications}, 
+        Achievements and Accomplishments: {answers.achievements}, Motivation: {answers.motivation}, 
+        Closing: {answers.closing}. Return answer as html."""
 
-    generate_pdf.delay(prompt=prompt, to=from_id)  # send cover letter via whatsapp
-    answers_repo.delete(from_id)
+    generate_pdf.delay(prompt=prompt, to=sender_id)  # send cover letter via whatsapp
+    repo.delete(sender_id)
     return 'success'
 
 
 @shared_task(name='generate_pdf')
 def generate_pdf(prompt, to):
     response = openai.Completion.create(
-        engine='text-davinci-003',
+        engine='__text-davinci-003',
         prompt=prompt,
         max_tokens=500,
         n=1,
@@ -43,7 +44,7 @@ def generate_pdf(prompt, to):
         presence_penalty=0.0
     )
 
-    html_content = response.choices[0].text
+    html_content = response.choices[0].__text
     filename = f'{to}.pdf'
 
     # Saving the File
@@ -98,7 +99,9 @@ def send_whatsapp_doc(to, link):
 
 @shared_task(name='send_advert_to_cover_letter_subscribers')
 def send_ad_to_cover_letter_sub(link: str):
-    subscriber_service = SubscriberService()
+    subscriber_repository = SubscriberSQLRepository()
+    subscriber_service = SubscriberService(subscriber_repository)
+
     subscribers = subscriber_service.get_all()
     for subscriber in subscribers:
         send_whatsapp_doc(subscriber.whatsapp_number, link)

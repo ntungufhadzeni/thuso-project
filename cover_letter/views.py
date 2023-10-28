@@ -5,7 +5,9 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
-from cover_letter.schemas.subscriber import Subscriber
+from cover_letter.repositories.answer_redis_repository import AnswerRedisRepository
+from cover_letter.repositories.subscriber_sql_repository import SubscriberSQLRepository
+from cover_letter.schemas.subscriber_model import SubscriberModel
 from cover_letter.services.chat_service import CoverLetterAssistant
 from cover_letter.services.subscriber_service import SubscriberService
 
@@ -33,12 +35,17 @@ def whatsapp_webhook(request):
         if 'contacts' in data['entry'][0]['changes'][0]['value']:
             if data['object'] == 'whatsapp_business_account':
                 profile_name = data['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']
-                from_id = data['entry'][0]['changes'][0]['value']['messages'][0]['from']
-                text = data['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
-                subscriber_service = SubscriberService()
-                subscriber = Subscriber(whatsapp_name=profile_name, whatsapp_number=from_id)
+                sender_id = data['entry'][0]['changes'][0]['value']['messages'][0]['from']
+                text = data['entry'][0]['changes'][0]['value']['messages'][0]['__text']['body']
+
+                subscriber_repository = SubscriberSQLRepository()
+                subscriber_service = SubscriberService(subscriber_repository)
+
+                subscriber = SubscriberModel(whatsapp_name=profile_name, whatsapp_number=sender_id)
                 subscriber_service.create(subscriber)
-                cover_letter_assistant = CoverLetterAssistant(from_id, text)
+
+                answer_repository = AnswerRedisRepository()
+                cover_letter_assistant = CoverLetterAssistant(answer_repository, sender_id, text)
                 cover_letter_assistant.handle_chat()
             else:
                 pass

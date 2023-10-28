@@ -5062,7 +5062,7 @@ S2.define('select2/defaults',[
       var original = stripDiacritics(data.text).toUpperCase();
       var term = stripDiacritics(params.term).toUpperCase();
 
-      // Check if the text contains the term
+      // Check if the __text contains the term
       if (original.indexOf(term) > -1) {
         return data;
       }

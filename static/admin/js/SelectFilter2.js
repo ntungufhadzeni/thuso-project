@@ -21,7 +21,7 @@ Requires core.js and SelectBox.js.
                     // Remove <p class="info">, because it just gets in the way.
                     from_box.parentNode.removeChild(p);
                 } else if (p.classList.contains("help")) {
-                    // Move help text up to the top so it isn't below the select
+                    // Move help __text up to the top so it isn't below the select
                     // boxes or wrapped off on the side to the right of the add
                     // button:
                     from_box.parentNode.insertBefore(p, from_box.parentNode.firstChild);
@@ -114,7 +114,7 @@ Requires core.js and SelectBox.js.
             to_box.className = 'filtered';
             
             const warning_footer = quickElement('div', selector_chosen, '', 'class', 'list-footer-display');
-            quickElement('span', warning_footer, '', 'id', field_id + '_list-footer-display-text');
+            quickElement('span', warning_footer, '', 'id', field_id + '_list-footer-display-__text');
             quickElement('span', warning_footer, ' (click to clear)', 'class', 'list-footer-display__clear');
             
             const clear_all = quickElement('a', selector_chosen, gettext('Remove all'), 'title', interpolate(gettext('Click to remove all chosen %s at once.'), [field_name]), 'href', '#', 'id', field_id + '_remove_all_link');
@@ -205,7 +205,7 @@ Requires core.js and SelectBox.js.
         refresh_filtered_warning: function(field_id) {
             const count = SelectBox.get_hidden_node_count(field_id + '_to');
             const selector = document.getElementById(field_id + '_selector_chosen');
-            const warning = document.getElementById(field_id + '_list-footer-display-text');
+            const warning = document.getElementById(field_id + '_list-footer-display-__text');
             selector.className = selector.className.replace('selector-chosen--with-filtered', '');
             warning.textContent = interpolate(ngettext(
                 '%s selected option not visible',

@@ -3259,7 +3259,7 @@ function toObject(value) {
 // ==--------------------------==
 
 /**
- * Creates an extended regular expression object for matching text with a pattern. Differs from a
+ * Creates an extended regular expression object for matching __text with a pattern. Differs from a
  * native regular expression in that additional syntax and flags are supported. The returned object
  * is in fact a native `RegExp` and works with all native methods.
  *
@@ -3950,7 +3950,7 @@ XRegExp.replace = function(str, search, replacement, scope) {
  * array of replacement details. Later replacements operate on the output of earlier replacements.
  * Replacement details are accepted as an array with a regex or string to search for, the
  * replacement string or function, and an optional scope of 'one' or 'all'. Uses the XRegExp
- * replacement text syntax, which supports named backreference properties via `${name}`.
+ * replacement __text syntax, which supports named backreference properties via `${name}`.
  *
  * @memberOf XRegExp
  * @param {String} str String to search.
@@ -4253,9 +4253,9 @@ fixed.match = function(regex) {
 };
 
 /**
- * Adds support for `${n}` tokens for named and numbered backreferences in replacement text, and
+ * Adds support for `${n}` tokens for named and numbered backreferences in replacement __text, and
  * provides named backreferences to replacement functions as `arguments[0].name`. Also fixes browser
- * bugs in replacement text syntax when performing a replacement using a nonregex search value, and
+ * bugs in replacement __text syntax when performing a replacement using a nonregex search value, and
  * the value of a replacement regex's `lastIndex` property during replacement iterations and upon
  * completion. Calling `XRegExp.install('natives')` uses this to override the native method. Note
  * that this doesn't support SpiderMonkey's proprietary third (`flags`) argument. Use via

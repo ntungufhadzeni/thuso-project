@@ -1,12 +1,12 @@
-from cover_letter.repositories.subscriber_repository import SubscriberRepository
+from cover_letter.repositories.repository import AbstractRepository
 
 
 class SubscriberService:
-    def __init__(self):
-        self.repo = SubscriberRepository()
+    def __init__(self, repository: AbstractRepository):
+        self.__repository = repository
 
-    def create(self, obj):
-        return self.repo.create(obj)
+    def create(self, data):
+        return self.__repository.create(data)
 
     def get_all(self):
-        return self.repo.get_all()
+        return self.__repository.get_all()
